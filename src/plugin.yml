@@ -1,0 +1,8 @@
+name: BedWars
+author: Papiertuch
+version: 1.0-BETA
+main: de.papiertuch.bedwars.BedWars
+commands:
+  start:
+  setup:
+  stats:
