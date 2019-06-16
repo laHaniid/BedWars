@@ -33,6 +33,14 @@ public class BlockBreakListener implements Listener {
             }
         } else if (BedWars.getInstance().getGameState() == GameState.INGAME) {
             if (player.getGameMode() == GameMode.CREATIVE) {
+                if (event.getBlock().getType() == Material.BED) {
+                    event.setCancelled(true);
+                    return;
+                }
+                if (event.getBlock().getType() == Material.BED_BLOCK) {
+                    event.setCancelled(true);
+                    return;
+                }
                 event.setCancelled(false);
                 return;
             }

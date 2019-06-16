@@ -2,9 +2,7 @@ package de.papiertuch.bedwars.game;
 
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
-import de.papiertuch.bedwars.utils.BedWarsTeam;
 import org.bukkit.*;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -36,8 +34,15 @@ public class Ending {
                     }
                      */
                     a.showPlayer(a);
+                    a.canSee(a);
                     a.setAllowFlight(false);
                     a.setFlying(false);
+                    if (!BedWars.getInstance().getPlayers().contains(a.getUniqueId())) {
+                        BedWars.getInstance().getGameHandler().setPlayer(a);
+                    }
+                    if (BedWars.getInstance().getSpectators().contains(a.getUniqueId())) {
+                        BedWars.getInstance().getSpectators().remove(a.getUniqueId());
+                    }
                 }
                 switch (seconds) {
                     case 16:
@@ -77,13 +82,10 @@ public class Ending {
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             BedWars.getInstance().getGameHandler().sendToFallback(a);
                         }
-                        for (Location location : BedWars.getInstance().getBlocks()) {
-                            Bukkit.getWorld(BedWars.getInstance().getBedWarsConfig().getString("mapName")).getBlockAt(location).setType(Material.AIR);
-                        }
                         Bukkit.getScheduler().runTaskLater(BedWars.getInstance(), new Runnable() {
                             @Override
                             public void run() {
-                                Bukkit.reload();
+                                Bukkit.shutdown();
                             }
                         }, 10);
                         break;

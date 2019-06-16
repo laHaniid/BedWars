@@ -2,6 +2,7 @@ package de.papiertuch.bedwars.utils;
 
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
+import de.papiertuch.bedwars.game.Game;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -134,6 +135,7 @@ public class Board {
             a.getScoreboard().getObjective("lobby").setDisplayName(getTitle());
             a.getScoreboard().getTeam("players").setPrefix(BedWars.getInstance().getBedWarsConfig().getString("scoreboard.line1.input")
                     .replace("%players%", String.valueOf(Bukkit.getOnlinePlayers().size())));
+            if (BedWars.getInstance().getGameState() == GameState.INGAME) {
             for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
                 if (team.hasBed()) {
                     a.getScoreboard().getTeam(team.getName()).setPrefix(BedWars.getInstance().getBedWarsConfig().getString("scoreboard.line.teamHasBed.one")
@@ -151,6 +153,7 @@ public class Board {
                     a.getScoreboard().getTeam(team.getName()).setSuffix(BedWars.getInstance().getBedWarsConfig().getString("scoreboard.line.teamHasNoBed.two")
                             .replace("%players%", String.valueOf(team.getPlayers().size())));
                 }
+            }
             }
         }
     }

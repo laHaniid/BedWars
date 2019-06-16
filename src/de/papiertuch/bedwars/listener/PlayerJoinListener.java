@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 
 /**
  * Created by Leon on 15.06.2019.
@@ -55,6 +56,14 @@ public class PlayerJoinListener implements Listener {
             player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("message.spectator"));
             player.teleport(BedWars.getInstance().getLocationAPI().getLocation("spectator"));
             BedWars.getInstance().getGameHandler().setSpectator(player);
+        }
+    }
+
+    @EventHandler
+    public void onLoginEvent(PlayerLoginEvent event) {
+        if (BedWars.getInstance().getGameState() == GameState.ENDING) {
+            event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            event.setKickMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDie Runde ist bereits zuende...");
         }
     }
 

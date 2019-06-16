@@ -11,11 +11,15 @@ import de.papiertuch.bedwars.stats.StatsAPI;
 import de.papiertuch.bedwars.stats.StatsHandler;
 import de.papiertuch.bedwars.utils.*;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -44,11 +48,14 @@ public class BedWars extends JavaPlugin {
     private ArrayList<Location> blocks;
     private StatsHandler statsHandler;
     private HashMap<String, Color> colors;
+    private HashMap<Color, Integer> colorIds;
     private HashMap<UUID, Integer> setupStatsWall;
     private ArrayList<UUID> players;
     private HashMap<Player, Player> lastHit;
     private ArrayList<Player> death;
     private ArrayList<Location> statsWall;
+    private ShopHandler shopHandler;
+    private HashMap<BedWarsTeam, Inventory> teamChest;
     private boolean boarder;
     private MySQL mySQL;
 
@@ -58,14 +65,17 @@ public class BedWars extends JavaPlugin {
         players = new ArrayList<>();
         death = new ArrayList<>();
         mySQL = new MySQL();
+        shopHandler = new ShopHandler();
         setupStatsWall = new HashMap<>();
         blocks = new ArrayList<>();
         statsHandler = new StatsHandler();
         scheduler = new Scheduler();
+        teamChest = new HashMap<>();
         gameHandler = new GameHandler();
         aliveTeams = new ArrayList<>();
         tabListGroups = new ArrayList<>();
         lastHit = new HashMap<>();
+        colorIds = new HashMap<>();
         statsWall = new ArrayList<>();
         colors = new HashMap<>();
         spectators = new ArrayList<>();
@@ -77,7 +87,7 @@ public class BedWars extends JavaPlugin {
         boarder = false;
         bedWarsConfig = new BedWarsConfig();
         bedWarsConfig.loadConfig();
-        Bukkit.createWorld(WorldCreator.name(getBedWarsConfig().getString("mapName")).type(WorldType.FLAT).generatorSettings("3;minecraft:air;2").generateStructures(false));
+        getGameHandler().loadMap();
         setGameState(GameState.LOBBY);
         register();
         loadGame();
@@ -91,14 +101,11 @@ public class BedWars extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (Player a : Bukkit.getOnlinePlayers()) {
-            a.kickPlayer("§cRestart");
-        }
-        for (Location location : BedWars.getInstance().getBlocks()) {
-            Bukkit.getWorld(BedWars.getInstance().getBedWarsConfig().getString("mapName")).getBlockAt(location).setType(Material.AIR);
-        }
         if (getMySQL().isConnected()) {
             getMySQL().disconnect();
+        }
+        for (Player a : Bukkit.getOnlinePlayers()) {
+            a.kickPlayer("§cRestart");
         }
     }
 
@@ -108,6 +115,8 @@ public class BedWars extends JavaPlugin {
             getServer().getConsoleSender().sendMessage("§cEs wurden keine Locations gefunden...");
             return;
         }
+
+        getServer().getConsoleSender().sendMessage("§8- §7MapBackup§8: " + (new File(BedWars.getInstance().getBedWarsConfig().getString("mapName")).exists() ? "§aGesetzt" : "§cFehlt"));
         getServer().getConsoleSender().sendMessage("§8- §7LobbySpawn§8: " + (getLocationAPI().isExists("lobby") ? "§aGesetzt" : "§cFehlt"));
         getServer().getConsoleSender().sendMessage("§8- §7SpectatorSpawn§8: " + (getLocationAPI().isExists("spectator") ? "§aGesetzt" : "§cFehlt"));
         getServer().getConsoleSender().sendMessage("§8- §7StatsWand§8: " + (BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall") == 10 ? "§aGesetzt" : "§cFehlt"));
@@ -125,7 +134,6 @@ public class BedWars extends JavaPlugin {
     }
 
     private void loadGame() {
-        ShopHandler.loadHashMaps();
         colors.put("AQUA", Color.AQUA);
         colors.put("BLACK", Color.BLACK);
         colors.put("BLUE", Color.BLUE);
@@ -143,6 +151,20 @@ public class BedWars extends JavaPlugin {
         colors.put("TEAL", Color.TEAL);
         colors.put("WHITE", Color.WHITE);
         colors.put("YELLOW", Color.YELLOW);
+
+        colorIds.put(Color.AQUA, 9);
+        colorIds.put(Color.BLACK, 15);
+        colorIds.put(Color.BLUE, 11);
+        colorIds.put(Color.FUCHSIA, 6);
+        colorIds.put(Color.GRAY, 7);
+        colorIds.put(Color.GREEN, 13);
+        colorIds.put(Color.LIME, 5);
+        colorIds.put(Color.ORANGE, 1);
+        colorIds.put(Color.PURPLE, 10);
+        colorIds.put(Color.RED, 14);
+        colorIds.put(Color.SILVER, 8);
+        colorIds.put(Color.WHITE, 0);
+        colorIds.put(Color.YELLOW, 4);
 
 
         for (String team : getBedWarsConfig().getConfiguration().getStringList("teams")) {
@@ -198,6 +220,18 @@ public class BedWars extends JavaPlugin {
         getCommand("start").setExecutor(new Start());
         getCommand("setup").setExecutor(new Setup());
         getCommand("stats").setExecutor(new Stats());
+    }
+
+    public HashMap<Color, Integer> getColorIds() {
+        return colorIds;
+    }
+
+    public ShopHandler getShopHandler() {
+        return shopHandler;
+    }
+
+    public HashMap<BedWarsTeam, Inventory> getTeamChest() {
+        return teamChest;
     }
 
     public HashMap<UUID, Integer> getSetupStatsWall() {

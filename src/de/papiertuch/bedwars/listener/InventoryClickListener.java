@@ -21,6 +21,7 @@ public class InventoryClickListener implements Listener {
         try {
             Player player = (Player) event.getWhoClicked();
             if (BedWars.getInstance().getGameState() == GameState.LOBBY || BedWars.getInstance().getGameState() == GameState.ENDING) {
+                event.setCancelled(true);
                 if (player.getGameMode() == GameMode.CREATIVE) {
                     event.setCancelled(false);
                 }
@@ -33,6 +34,7 @@ public class InventoryClickListener implements Listener {
                 event.setCancelled(true);
             }
             if (event.getInventory().getName().equals(BedWars.getInstance().getBedWarsConfig().getString("item.compass.name"))) {
+                event.setCancelled(true);
                 String name = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
                 Player target = Bukkit.getPlayer(name);
                 if (target != null) {

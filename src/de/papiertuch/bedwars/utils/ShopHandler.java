@@ -1,19 +1,15 @@
 package de.papiertuch.bedwars.utils;
 
 import de.papiertuch.bedwars.BedWars;
-import de.papiertuch.bedwars.listener.ShopClickListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-
-import java.util.Arrays;
-import java.util.HashMap;
 
 /**
  * Created by Leon on 15.06.2019.
@@ -22,435 +18,419 @@ import java.util.HashMap;
  */
 
 public class ShopHandler {
-    
-    private static boolean isIron = true;
-    private static boolean isGold = true;
 
-    public static void openHauptInv(Player p) {
-        Inventory inv = Bukkit.createInventory(null, 1 * 9, "§8» §eBedWars §8× §aShop");
 
-        inv.addItem(createItem(Material.SANDSTONE, "§8» §aBlöcke"));
-        inv.addItem(createItem(Material.CHAINMAIL_CHESTPLATE, "§8» §aRüstung"));
-        inv.addItem(createItem(Material.IRON_PICKAXE, "§8» §aSpitzhacken"));
-        inv.addItem(createItem(Material.WOOD_SWORD, "§8» §aSchwerter"));
-        inv.addItem(createItem(Material.BOW, "§8» §aBögen"));
-        inv.addItem(createItem(Material.CAKE, "§8» §aEssen"));
-        inv.addItem(createItem(Material.ENDER_CHEST, "§8» §aKisten"));
-        inv.addItem(createItem(Material.GLASS_BOTTLE, "§8» §aTränke"));
-        inv.addItem(createItem(Material.EMERALD, "§8» §aSpezial"));
-
-        p.openInventory(inv);
+    private void setMainItems(Inventory inventory) {
+        inventory.setItem(0, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.bricks.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.bricks.name"))
+                .build());
+        inventory.setItem(1, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.armor.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.armor.name"))
+                .build());
+        inventory.setItem(2, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.tools.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.tools.name"))
+                .build());
+        inventory.setItem(3, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.swords.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.swords.name"))
+                .build());
+        inventory.setItem(4, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.bows.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.bows.name"))
+                .build());
+        inventory.setItem(5, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.food.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.food.name"))
+                .build());
+        inventory.setItem(6, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.chests.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.chests.name"))
+                .build());
+        inventory.setItem(7, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.potions.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.potions.name"))
+                .build());
+        inventory.setItem(8, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.specials.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.specials.name"))
+                .build());
     }
 
-    public static void openBoegenInv(Player p) {
-        Inventory inv = getHauptInv("Bögen");
-        HashMap<Enchantment, Integer> list = new HashMap<Enchantment, Integer>();
-        list.put(Enchantment.ARROW_INFINITE, 1);
-        ItemStack i = createItemenchant(Material.BOW, "§8» §bBogen Level 1", "§8» §63 Gold", list);
-        i.setDurability((short) 0.25);
-        inv.setItem(11, i);
-        list.put(Enchantment.ARROW_DAMAGE, 1);
-        i = createItemenchant(Material.BOW, "§8» §bBogen Level 2", "§8» §66 Gold", list);
-        i.setDurability((short) 0.25);
-        inv.setItem(12, i);
-        list.clear();
-        list.put(Enchantment.ARROW_DAMAGE, 2);
-        list.put(Enchantment.ARROW_INFINITE, 1);
-        i = createItemenchant(Material.BOW, "§8» §bBogen Level 3", "§8» §69 Gold", list);
-        i.setDurability((short) 0.25);
-        inv.setItem(13, i);
-        inv.setItem(15, createItemamount(Material.ARROW, "§8» §bPfeil", 1, "§8» §61 Gold"));
-
-
-        p.openInventory(inv);
-    }
-
-    public static void openSpezialSHOP(Player p) {
-        Inventory inv = getHauptInv("Spezial");
-        inv.setItem(9, createItemamount(Material.LADDER, "§8» §bLeiter", 1, "§8» §c4 Bronze"));
-        inv.setItem(10, createItemamount(Material.FIREWORK, "§8» §bTeleporter", 1, "§8» §f5 Eisen"));
-        inv.setItem(11, createItemamount(Material.ARMOR_STAND, "§8» §bMobiler Shop", 1, "§8» §f7 Eisen"));
-        inv.setItem(12, createItemamount(Material.TNT, "§8» §bTNT", 1, "§8» §63 Gold"));
-        inv.setItem(14, createItemamount(Material.EGG, "§8» §bFallschirm", 1, "§8» §63 Gold"));
-        inv.setItem(15, createItemamount(Material.BLAZE_ROD, "§8» §bRettungsplattform", 1, "§8» §63 Gold"));
-        inv.setItem(16, createItemamount(Material.ENDER_PEARL, "§8» §bEnderperle", 1, "§8» §613 Gold"));
-        inv.setItem(17, createItemamount(Material.WEB, "§8» §bSpinnweben", 1, "§8» §c16 Bronze"));
-        p.openInventory(inv);
-    }
-
-
-    public static void openBloeckeInv(Player p) {
-        Inventory inv = getHauptInv("Blöcke");
-        inv.setItem(11, createItemamount(Material.SANDSTONE, "§8» §bSandstein", 2, "§8» §c1 Bronze"));
-        inv.setItem(12, createItemamount(Material.ENDER_STONE, "§8» §bEndstein", 1, "§8» §c7 Bronze"));
-        inv.setItem(13, createItemamount(Material.IRON_BLOCK, "§8» §bEisenblock", 1, "§8» §f3 Eisen"));
-        ItemStack item = new ItemStack(Material.STAINED_GLASS, 1, (short) 0);
-        ItemMeta itemm = item.getItemMeta();
-        itemm.setDisplayName("§8» §bTeamGlass");
-        itemm.setLore(Arrays.asList("§8» §c4 Bronze"));
-        item.setItemMeta(itemm);
-        inv.setItem(14, item);
-        inv.setItem(15, createItemamount(Material.GLOWSTONE, "§8» §bGlowstone", 1, "§8» §c4 Bronze"));
-        p.openInventory(inv);
-    }
-
-    public static void openKistenInv(Player p) {
-        Inventory inv = getHauptInv("Kisten");
-        if (isIron) {
-            inv.setItem(12, createItemamount(Material.CHEST, "§8» §bKiste", 1, "§8» §f1 Eisen"));
-        } else {
-            inv.setItem(12, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        if (isGold) {
-            inv.setItem(14, createItemamount(Material.ENDER_CHEST, "§8» §bTeamKiste", 1, "§8» §61 Gold"));
-        } else {
-            inv.setItem(14, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        p.openInventory(inv);
-    }
-
-    public static void openTraenkeInv(Player p) {
-        Inventory inv = getHauptInv("Tränke");
-        if (isIron) {
-            inv.setItem(9, createItemtraenke("§8» §bTrank der Heilung 1", "§8» §f3 Eisen", 8261));
-        } else {
-            inv.setItem(9, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        if (isIron) {
-            inv.setItem(11, createItemtraenke("§8» §bTrank der Heilung 2", "§8» §f7 Eisen", 8229));
-        } else {
-            inv.setItem(11, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        if (isGold) {
-            inv.setItem(13, createItemtraenke("§8» §bTrank der Stärke", "§8» §63 Gold", 8201));
-        } else {
-            inv.setItem(13, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        if (isGold) {
-            inv.setItem(15, createItemtraenke("§8» §bTrank der Regeneration", "§8» §63 Gold", 8193));
-        } else {
-            inv.setItem(15, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        if (isIron) {
-            inv.setItem(17, createItemtraenke("§8» §bTrank der Sprungkraft", "§8» §f Eisen", 8203));
-        } else {
-            inv.setItem(17, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        p.openInventory(inv);
-    }
-
-    public static void openEssenInv(Player p) {
-        Inventory inv = getHauptInv("Essen");
-        inv.setItem(11, createItemamount(Material.APPLE, "§8» §bApfel", 1, "§8» §c1 Bronze"));
-        inv.setItem(12, createItemamount(Material.COOKED_BEEF, "§8» §bSteak", 1, "§8» §c2 Bronze"));
-        if (isIron) {
-            inv.setItem(13, createItemamount(Material.CAKE, "§8» §bKuchen", 1, "§8» §f1 Eisen"));
-        } else {
-            inv.setItem(13, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        if (isGold) {
-            inv.setItem(15, createItemamount(Material.GOLDEN_APPLE, "§8» §bGoldener Apfel", 1, "§8» §62 Gold"));
-        } else {
-            inv.setItem(15, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        p.openInventory(inv);
-    }
-
-    public static void openSpitzhackenInv(Player p) {
-        Inventory inv = getHauptInv("Spitzhacken");
-        inv.setItem(12, createItemamount(Material.WOOD_PICKAXE, "§8» §bSpitzhacke Level 1", 1, "§8» §c4 Bronze"));
-        if (isIron) {
-            inv.setItem(13, createItemamount(Material.STONE_PICKAXE, "§8» §bSpitzhacke Level 2", 1, "§8» §f2 Eisen"));
-        } else {
-            inv.setItem(13, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        if (isGold) {
-            inv.setItem(14, createItemamount(Material.IRON_PICKAXE, "§8» §bSpitzhacke Level 3", 1, "§8» §61 Gold"));
-        } else {
-            inv.setItem(14, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        p.openInventory(inv);
-    }
-
-    public static void openRuestungInv(Player p) {
-        Inventory inv = getHauptInv("Rüstung");
-        inv.setItem(9, createItemarmor("§8» §bLederhelm", "§8» §c1 Bronze", Material.LEATHER_HELMET, p));
-        inv.setItem(10, createItemarmor("§8» §bLederhose", "§8» §c1 Bronze", Material.LEATHER_LEGGINGS, p));
-        inv.setItem(11, createItemarmor("§8» §bLederschuhe", "§8» §c1 Bronze", Material.LEATHER_BOOTS, p));
-        if (isIron) {
-            inv.setItem(14, createItemamount(Material.CHAINMAIL_CHESTPLATE, "§8» §bBrustplatte Level 1", 1, "§8» §f1 Eisen"));
-        } else {
-            inv.setItem(14, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        HashMap<Enchantment, Integer> list = new HashMap<Enchantment, Integer>();
-        list.put(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
-        if (isIron) {
-            inv.setItem(15, createItemenchant(Material.CHAINMAIL_CHESTPLATE, "§8» §bBrustplatte Level 2", "§8» §f3 Eisen", list));
-        } else {
-            inv.setItem(15, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        list.clear();
-        list.put(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
-        if (isIron) {
-            inv.setItem(16, createItemenchant(Material.CHAINMAIL_CHESTPLATE, "§8» §bBrustplatte Level 3", "§8» §f5 Eisen", list));
-        } else {
-            inv.setItem(16, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        list.clear();
-        list.put(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
-        list.put(Enchantment.THORNS, 1);
-        if (isIron) {
-            inv.setItem(17, createItemenchant(Material.CHAINMAIL_CHESTPLATE, "§8» §bBrustplatte Level 4", "§8» §f7 Eisen", list));
-        } else {
-            inv.setItem(17, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        p.openInventory(inv);
-    }
-
-    public static void openSchwerterInv(Player p) {
-        Inventory inv = getHauptInv("Schwerter");
-        HashMap<Enchantment, Integer> list = new HashMap<Enchantment, Integer>();
-        list.put(Enchantment.KNOCKBACK, 1);
-        inv.setItem(11, createItemenchant(Material.STICK, "§8» §bKnüppel", "§8» §c8 Bronze", list));
-        list.clear();
-        if (isIron) {
-            inv.setItem(12, createItemamount(Material.WOOD_SWORD, "§8» §bHolzschwert", 1, "§f1 Eisen"));
-        } else {
-            inv.setItem(12, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        list.clear();
-        list.put(Enchantment.DAMAGE_ALL, 1);
-        list.put(Enchantment.DURABILITY, 1);
-        if (isIron) {
-            inv.setItem(13, createItemenchant(Material.WOOD_SWORD, "§8» §bHolzschwert Level 1", "§8» §f3 Eisen", list));
-        } else {
-            inv.setItem(13, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        list.clear();
-        list.put(Enchantment.DAMAGE_ALL, 2);
-        list.put(Enchantment.DURABILITY, 1);
-        if (isIron) {
-            inv.setItem(14, createItemenchant(Material.WOOD_SWORD, "§8» §bHolzschwert Level 2", "§8» §f5 Eisen", list));
-        } else {
-            inv.setItem(14, createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        list.clear();
-        list.put(Enchantment.DAMAGE_ALL, 2);
-        list.put(Enchantment.KNOCKBACK, 1);
-        if (isGold) {
-            inv.setItem(15, createItemenchant(Material.IRON_SWORD, "§8» §bEisenschwert", "§8» §65 Gold", list));
-        } else {
-            inv.addItem(createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        p.openInventory(inv);
-    }
-
-    public static Inventory getHauptInv(String name) {
-        Inventory inv = Bukkit.createInventory(null, 2 * 9, "§8» §eBedWars §8× §a" + name);
-        inv.addItem(createItem(Material.SANDSTONE, "§8» §aBlöcke"));
-        inv.addItem(createItem(Material.CHAINMAIL_CHESTPLATE, "§8» §aRüstung"));
-        inv.addItem(createItem(Material.IRON_PICKAXE, "§8» §aSpitzhacken"));
-        inv.addItem(createItem(Material.WOOD_SWORD, "§8» §aSchwerter"));
-        if (isGold) {
-            inv.addItem(createItem(Material.BOW, "§8» §aBögen"));
-        } else {
-            inv.addItem(createItem(Material.BARRIER, "§8» §c✖"));
-        }
-        inv.addItem(createItem(Material.CAKE, "§8» §aEssen"));
-        inv.addItem(createItem(Material.ENDER_CHEST, "§8» §aKisten"));
-        inv.addItem(createItem(Material.GLASS_BOTTLE, "§8» §aTränke"));
-        inv.addItem(createItem(Material.EMERALD, "§8» §aSpezial"));
-        return inv;
-    }
-
-    private static ItemStack createItem(Material m, String name) {
-        ItemStack item = new ItemStack(m);
-        ItemMeta itemm = item.getItemMeta();
-        itemm.setDisplayName(name);
-        item.setItemMeta(itemm);
-        return item;
-    }
-
-    private static ItemStack createItemamount(Material m, String name, int amount, String lore) {
-        ItemStack item = new ItemStack(m, amount);
-        ItemMeta itemm = item.getItemMeta();
-        itemm.setDisplayName(name);
-        itemm.setLore(Arrays.asList(lore));
-        item.setItemMeta(itemm);
-        return item;
-    }
-
-    private static ItemStack createItemtraenke(String name, String lore, int shortID) {
-        ItemStack item = new ItemStack(Material.POTION, 1, (short) shortID);
-        ItemMeta itemm = item.getItemMeta();
-        itemm.setDisplayName(name);
-        itemm.setLore(Arrays.asList(lore));
-        item.setItemMeta(itemm);
-        return item;
-    }
-
-    private static ItemStack createItemarmor(String name, String lore, Material m, Player p) {
-        ItemStack item = new ItemStack(m);
-        LeatherArmorMeta itemm = (LeatherArmorMeta) item.getItemMeta();
-        itemm.setDisplayName(name);
-        itemm.setLore(Arrays.asList(lore));
-        itemm.setColor(BedWars.getInstance().getGameHandler().getTeam(p).getColorasColor());
-        item.setItemMeta(itemm);
-        return item;
-    }
-
-    private static ItemStack createItemenchant(Material m, String name, String lore, HashMap<Enchantment, Integer> list) {
-        ItemStack item = new ItemStack(m);
-        ItemMeta itemm = item.getItemMeta();
-        itemm.setDisplayName(name);
-        itemm.setLore(Arrays.asList(lore));
-        for (Enchantment e : list.keySet()) {
-            itemm.addEnchant(e, list.get(e), true);
-        }
-        item.setItemMeta(itemm);
-        return item;
-    }
-
-    public static void removeInventoryItemsStack(PlayerInventory inv, Material type, int amount, ItemStack add) {
-        int maxamount = 0;
-        ItemStack[] arritemStack = inv.getContents();
-        int n = arritemStack.length;
-        int n2 = 0;
-        while (n2 < n) {
-            ItemStack is = arritemStack[n2];
-            if (is != null && is.getType() == type) {
-                maxamount += is.getAmount();
+    private void fillInventory(Inventory inventory) {
+        for (int i = 0; i < inventory.getSize(); i++) {
+            if (inventory.getItem(i) == null) {
+                inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE, 1)
+                        .setName("§7")
+                        .build());
             }
-            ++n2;
-        }
-        int amountofitems = maxamount / amount;
-        if (add.getAmount() == 2) {
-            if (amountofitems >= 33) {
-                amountofitems = 32;
-            }
-        } else if (amountofitems >= 65) {
-            amountofitems = 64;
-        }
-        int remove = amountofitems * amount;
-        removeInventoryItems(inv, type, remove);
-        int i = 0;
-        while (i < amountofitems) {
-            inv.addItem(new ItemStack[]{add});
-            ++i;
         }
     }
 
-    public static boolean removeInventoryItems(PlayerInventory inv, Material type, int amount) {
-        boolean b = false;
-        ItemStack[] arritemStack = inv.getContents();
-        int n = arritemStack.length;
-        int n2 = 0;
-        while (n2 < n) {
-            ItemStack is = arritemStack[n2];
+    public Inventory getMainInventory() {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.title") + " §8┃ §aMenü");
+        inventory.setItem(9, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.bricks.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.bricks.name"))
+                .build());
+        inventory.setItem(10, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.armor.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.armor.name"))
+                .build());
+        inventory.setItem(11, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.tools.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.tools.name"))
+                .build());
+        inventory.setItem(12, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.swords.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.swords.name"))
+                .build());
+        inventory.setItem(13, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.bows.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.bows.name"))
+                .build());
+        inventory.setItem(14, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.food.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.food.name"))
+                .build());
+        inventory.setItem(15, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.chests.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.chests.name"))
+                .build());
+        inventory.setItem(16, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.potions.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.potions.name"))
+                .build());
+        inventory.setItem(17, new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.specials.item")), 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.specials.name"))
+                .build());
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getSpecialInventory(String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(18, new ItemBuilder(Material.LADDER, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.ladder.amount"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.ladder.name"))
+                .setLore("§8» " + getPrice("ladder"))
+                .build());
+        inventory.setItem(19, new ItemBuilder(Material.WEB, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.web.amount"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.web.name"))
+                .setLore("§8» " + getPrice("web"))
+                .build());
+        inventory.setItem(20, new ItemBuilder(Material.FIREWORK, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.warp.amount"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.warp.name"))
+                .setLore("§8» " + getPrice("warp"))
+                .build());
+        inventory.setItem(21, new ItemBuilder(Material.ARMOR_STAND, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.shop.amount"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.shop.name"))
+                .setLore("§8» " + getPrice("shop"))
+                .build());
+
+        inventory.setItem(23, new ItemBuilder(Material.TNT, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.tnt.amount"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.tnt.name"))
+                .setLore("§8» " + getPrice("tnt"))
+                .build());
+        inventory.setItem(24, new ItemBuilder(Material.EGG, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.egg.amount"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.egg.name"))
+                .setLore("§8» " + getPrice("egg"))
+                .build());
+        inventory.setItem(25, new ItemBuilder(Material.BLAZE_ROD, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.rescue.amount"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.rescue.name"))
+                .setLore("§8» " + getPrice("rescue"))
+                .build());
+        inventory.setItem(26, new ItemBuilder(Material.ENDER_PEARL, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.pearl.amount"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.pearl.name"))
+                .setLore("§8» " + getPrice("pearl"))
+                .build());
+
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getPotionsInventory(String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(18, new ItemBuilder(Material.POTION, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.healing1.amount"))
+                .setData(8261)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.healing1.name"))
+                .setLore("§8» " + getPrice("healing1"))
+                .build());
+        inventory.setItem(20, new ItemBuilder(Material.POTION, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.healing2.amount"))
+                .setData(8229)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.healing2.name"))
+                .setLore("§8» " + getPrice("healing2"))
+                .build());
+        inventory.setItem(22, new ItemBuilder(Material.POTION, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.strength.amount"))
+                .setData(8201)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.strength.name"))
+                .setLore("§8» " + getPrice("strength"))
+                .build());
+        inventory.setItem(24, new ItemBuilder(Material.POTION, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.regeneration.amount"))
+                .setData(8193)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.regeneration.name"))
+                .setLore("§8» " + getPrice("regeneration"))
+                .build());
+        inventory.setItem(26, new ItemBuilder(Material.POTION, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.speed.amount"))
+                .setData(8194)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.speed.name"))
+                .setLore("§8» " + getPrice("speed"))
+                .build());
+
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getChestInventory(String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(21, new ItemBuilder(Material.CHEST, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.chest.amount"))
+                .setLore("§8» " + getPrice("chest"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.chest.name"))
+                .build());
+        inventory.setItem(23, new ItemBuilder(Material.ENDER_CHEST, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.endChest.amount"))
+                .setLore("§8» " + getPrice("endChest"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.endChest.name"))
+                .build());
+
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getFoodInventory(String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(20, new ItemBuilder(Material.APPLE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.apple.amount"))
+                .setLore("§8» " + getPrice("apple"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.apple.name"))
+                .build());
+        inventory.setItem(21, new ItemBuilder(Material.COOKED_BEEF, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.beef.amount"))
+                .setLore("§8» " + getPrice("beef"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.beef.name"))
+                .build());
+        inventory.setItem(22, new ItemBuilder(Material.CAKE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.cake.amount"))
+                .setLore("§8» " + getPrice("cake"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.cake.name"))
+                .build());
+
+        inventory.setItem(24, new ItemBuilder(Material.GOLDEN_APPLE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.goldenApple.amount"))
+                .setLore("§8» " + getPrice("goldenApple"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.goldenApple.name"))
+                .build());
+
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getBowInventory(String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(20, new ItemBuilder(Material.BOW, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.bow1.amount"))
+                .setLore("§8» " + getPrice("bow1"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.bow1.name"))
+                .build());
+        inventory.setItem(21, new ItemBuilder(Material.BOW, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.bow2.amount"))
+                .enchant(Enchantment.ARROW_DAMAGE, 1)
+                .setLore("§8» " + getPrice("bow2"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.bow2.name"))
+                .build());
+        inventory.setItem(22, new ItemBuilder(Material.BOW, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.bow3.amount"))
+                .setLore("§8» " + getPrice("bow3"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.bow3.name"))
+                .enchant(Enchantment.ARROW_DAMAGE, 2)
+                .build());
+
+        inventory.setItem(24, new ItemBuilder(Material.ARROW, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.arrow.amount"))
+                .setLore("§8» " + getPrice("arrow"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.arrow.name"))
+                .build());
+
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getWeaponsInventory(String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(20, new ItemBuilder(Material.STICK, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.stick.amount"))
+                .setLore("§8» " + getPrice("stick"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.stick.name"))
+                .enchant(Enchantment.KNOCKBACK, 1)
+                .build());
+        inventory.setItem(21, new ItemBuilder(Material.WOOD_SWORD, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.sword1.amount"))
+                .setLore("§8» " + getPrice("sword1"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.sword1.name"))
+                .build());
+        inventory.setItem(22, new ItemBuilder(Material.WOOD_SWORD, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.sword2.amount"))
+                .enchant(Enchantment.DAMAGE_ALL, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.sword2.name"))
+                .setLore("§8» " + getPrice("sword2"))
+                .build());
+        inventory.setItem(23, new ItemBuilder(Material.WOOD_SWORD, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.sword3.amount"))
+                .enchant(Enchantment.DAMAGE_ALL, 2)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.sword3.name"))
+                .setLore("§8» " + getPrice("sword3"))
+                .build());
+        inventory.setItem(24, new ItemBuilder(Material.IRON_SWORD, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.sword4.amount"))
+                .enchant(Enchantment.DAMAGE_ALL, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.sword4.name"))
+                .enchant(Enchantment.KNOCKBACK, 1)
+                .setLore("§8» " + getPrice("sword4"))
+                .build());
+
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getToolsInventory(String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(21, new ItemBuilder(Material.WOOD_PICKAXE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.woodPickAxe.amount"))
+                .setLore("§8» " + getPrice("woodPickAxe"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.woodPickAxe.name"))
+                .build());
+        inventory.setItem(22, new ItemBuilder(Material.STONE_PICKAXE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.stonePickAxe.amount"))
+                .setLore("§8» " + getPrice("stonePickAxe"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.stonePickAxe.name"))
+                .build());
+        inventory.setItem(23, new ItemBuilder(Material.IRON_PICKAXE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.ironPickAxe.amount"))
+                .setLore("§8» " + getPrice("ironPickAxe"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.ironPickAxe.name"))
+                .build());
+
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getArmorInventory(Player player, String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(19, new ItemBuilder(Material.LEATHER_HELMET, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.helmet.amount"))
+                .setLeatherColor(BedWars.getInstance().getGameHandler().getTeam(player).getColorasColor())
+                .setLore("§8» " + getPrice("helmet"))
+                .enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.helmet.name"))
+                .build());
+        inventory.setItem(20, new ItemBuilder(Material.LEATHER_LEGGINGS, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.leggings.amount"))
+                .setLeatherColor(BedWars.getInstance().getGameHandler().getTeam(player).getColorasColor())
+                .setLore("§8» " + getPrice("leggings"))
+                .enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.leggings.name"))
+                .build());
+        inventory.setItem(21, new ItemBuilder(Material.LEATHER_BOOTS, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.boots.amount"))
+                .setLeatherColor(BedWars.getInstance().getGameHandler().getTeam(player).getColorasColor())
+                .setLore("§8» " + getPrice("boots"))
+                .enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.boots.name"))
+                .build());
+
+        inventory.setItem(23, new ItemBuilder(Material.CHAINMAIL_CHESTPLATE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.chestPlate1.amount"))
+                .setLore("§8» " + getPrice("chestPlate1"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.chestPlate1.name"))
+                .build());
+        inventory.setItem(24, new ItemBuilder(Material.CHAINMAIL_CHESTPLATE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.chestPlate2.amount"))
+                .setLore("§8» " + getPrice("chestPlate2"))
+                .enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.chestPlate2.name"))
+                .build());
+        inventory.setItem(25, new ItemBuilder(Material.CHAINMAIL_CHESTPLATE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.chestPlate3.amount"))
+                .setLore("§8» " + getPrice("chestPlate3"))
+                .enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.chestPlate3.name"))
+                .build());
+        inventory.setItem(26, new ItemBuilder(Material.CHAINMAIL_CHESTPLATE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.chestPlate4.amount"))
+                .setLore("§8» " + getPrice("chestPlate4"))
+                .enchant(Enchantment.PROTECTION_ENVIRONMENTAL, 2)
+                .enchant(Enchantment.THORNS, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.chestPlate4.name"))
+                .build());
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    public Inventory getBricksInventory(Player player, String title) {
+        Inventory inventory = Bukkit.createInventory(null, 3 * 9, title + " §8┃ §aMenü");
+        setMainItems(inventory);
+        inventory.setItem(20, new ItemBuilder(Material.STAINED_CLAY, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.bricks.amount"))
+                .setData(BedWars.getInstance().getColorIds().get(BedWars.getInstance().getGameHandler().getTeam(player).getColorasColor()))
+                .setLore("§8» " + getPrice("bricks"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.bricks.name"))
+                .build());
+        inventory.setItem(21, new ItemBuilder(Material.ENDER_STONE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.endStone.amount"))
+                .setLore("§8» " + getPrice("endStone"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.endStone.name"))
+                .build());
+        inventory.setItem(22, new ItemBuilder(Material.IRON_BLOCK, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.ironBlock.amount"))
+                .setLore("§8» " + getPrice("ironBlock"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.ironBlock.name"))
+                .build());
+        inventory.setItem(23, new ItemBuilder(Material.STAINED_GLASS, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.glass.amount"))
+                .setData(BedWars.getInstance().getColorIds().get(BedWars.getInstance().getGameHandler().getTeam(player).getColorasColor()))
+                .setLore("§8» " + getPrice("glass"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.glass.name"))
+                .build());
+        inventory.setItem(24, new ItemBuilder(Material.GLOWSTONE, BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.glowStone.amount"))
+                .setLore("§8» " + getPrice("glowStone"))
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.glowStone.name"))
+                .build());
+        fillInventory(inventory);
+        return inventory;
+    }
+
+    private String getPrice(String item) {
+        String material = BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item." + item + ".price.material");
+        int price = BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item." + item + ".price.price");
+        if (material.equals("CLAY_BRICK")) {
+            return "§c" + price + " Bronze";
+        }
+        if (material.equals("IRON_INGOT")) {
+            return "§f" + price + " Eisen";
+        }
+        if (material.equals("GOLD_INGOT")) {
+            return "§6" + price + " Gold";
+        }
+        return "none";
+    }
+
+    public void buyItem(InventoryClickEvent event, Player player, ItemStack itemStack, Material setMaterial, int amount) {
+        if (player.getInventory().contains(setMaterial, amount)) {
+            int buyThings = 1;
+            if (event.isShiftClick()) {
+                buyThings = event.getCurrentItem().getMaxStackSize();
+            }
+            if (setMaterial != null) {
+                int itemAmount = getAmount(player.getInventory(), setMaterial);
+                if (itemAmount >= amount) {
+                    int canBuy = itemAmount / amount;
+                    if (canBuy > buyThings) {
+                        canBuy = buyThings;
+                    }
+                    removeItems(player.getInventory(), setMaterial, amount * canBuy);
+                    for (int c = 0; c < canBuy; c++) {
+                        player.getInventory().addItem(new ItemStack[]{itemStack});
+                    }
+                    player.updateInventory();
+                }
+            }
+        } else {
+            player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu hast nicht genügend Ressourcen!");
+            player.playSound(player.getLocation(), Sound.NOTE_BASS, 10.0F, 10.0F);
+            return;
+        }
+    }
+
+    public void removeItems(PlayerInventory inv, Material type, int amount) {
+        for (ItemStack is : inv.getContents()) {
             if (is != null && is.getType() == type) {
-                b = true;
                 int newamount = is.getAmount() - amount;
                 if (newamount > 0) {
                     is.setAmount(newamount);
                     break;
+                } else {
+                    inv.remove(is);
+                    amount = -newamount;
+                    if (amount == 0) break;
                 }
-                inv.remove(is);
-                amount = -newamount;
-                if (amount == 0) break;
             }
-            ++n2;
         }
-        return b;
+
     }
 
-    public static void loadHashMaps() {
-        ShopClickListener.bloecke_material.put(11, Material.CLAY_BRICK);
-        ShopClickListener.bloecke_material.put(12, Material.CLAY_BRICK);
-        ShopClickListener.bloecke_material.put(13, Material.IRON_INGOT);
-        ShopClickListener.bloecke_material.put(14, Material.CLAY_BRICK);
-        ShopClickListener.bloecke_material.put(15, Material.CLAY_BRICK);
-        ShopClickListener.bloecke_price.put(11, 1);
-        ShopClickListener.bloecke_price.put(12, 7);
-        ShopClickListener.bloecke_price.put(13, 3);
-        ShopClickListener.bloecke_price.put(14, 4);
-        ShopClickListener.bloecke_price.put(15, 4);
-        ShopClickListener.ruestung_material.put(9, Material.CLAY_BRICK);
-        ShopClickListener.ruestung_material.put(10, Material.CLAY_BRICK);
-        ShopClickListener.ruestung_material.put(11, Material.CLAY_BRICK);
-        ShopClickListener.ruestung_material.put(14, Material.IRON_INGOT);
-        ShopClickListener.ruestung_material.put(15, Material.IRON_INGOT);
-        ShopClickListener.ruestung_material.put(16, Material.IRON_INGOT);
-        ShopClickListener.ruestung_material.put(17, Material.IRON_INGOT);
-        ShopClickListener.ruestung_price.put(9, 1);
-        ShopClickListener.ruestung_price.put(10, 1);
-        ShopClickListener.ruestung_price.put(11, 1);
-        ShopClickListener.ruestung_price.put(14, 1);
-        ShopClickListener.ruestung_price.put(15, 3);
-        ShopClickListener.ruestung_price.put(16, 5);
-        ShopClickListener.ruestung_price.put(17, 7);
-        ShopClickListener.spitzhacken_material.put(12, Material.CLAY_BRICK);
-        ShopClickListener.spitzhacken_material.put(13, Material.IRON_INGOT);
-        ShopClickListener.spitzhacken_material.put(14, Material.GOLD_INGOT);
-        ShopClickListener.spitzhacken_price.put(12, 4);
-        ShopClickListener.spitzhacken_price.put(13, 2);
-        ShopClickListener.spitzhacken_price.put(14, 1);
-        ShopClickListener.schwerter_material.put(11, Material.CLAY_BRICK);
-        ShopClickListener.schwerter_material.put(12, Material.IRON_INGOT);
-        ShopClickListener.schwerter_material.put(13, Material.IRON_INGOT);
-        ShopClickListener.schwerter_material.put(14, Material.IRON_INGOT);
-        ShopClickListener.schwerter_material.put(15, Material.GOLD_INGOT);
-        ShopClickListener.schwerter_price.put(11, 8);
-        ShopClickListener.schwerter_price.put(12, 1);
-        ShopClickListener.schwerter_price.put(13, 3);
-        ShopClickListener.schwerter_price.put(14, 5);
-        ShopClickListener.schwerter_price.put(15, 5);
-        ShopClickListener.boegen_material.put(11, Material.GOLD_INGOT);
-        ShopClickListener.boegen_material.put(12, Material.GOLD_INGOT);
-        ShopClickListener.boegen_material.put(13, Material.GOLD_INGOT);
-        ShopClickListener.boegen_material.put(15, Material.GOLD_INGOT);
-        ShopClickListener.boegen_price.put(11, 3);
-        ShopClickListener.boegen_price.put(12, 6);
-        ShopClickListener.boegen_price.put(13, 9);
-        ShopClickListener.boegen_price.put(15, 1);
-        ShopClickListener.essen_material.put(11, Material.CLAY_BRICK);
-        ShopClickListener.essen_material.put(12, Material.CLAY_BRICK);
-        ShopClickListener.essen_material.put(13, Material.IRON_INGOT);
-        ShopClickListener.essen_material.put(15, Material.GOLD_INGOT);
-        ShopClickListener.essen_price.put(11, 1);
-        ShopClickListener.essen_price.put(12, 2);
-        ShopClickListener.essen_price.put(13, 1);
-        ShopClickListener.essen_price.put(15, 2);
-        ShopClickListener.kisten_material.put(12, Material.IRON_INGOT);
-        ShopClickListener.kisten_material.put(14, Material.GOLD_INGOT);
-        ShopClickListener.kisten_price.put(12, 1);
-        ShopClickListener.kisten_price.put(14, 1);
-        ShopClickListener.traenke_material.put(9, Material.IRON_INGOT);
-        ShopClickListener.traenke_material.put(11, Material.IRON_INGOT);
-        ShopClickListener.traenke_material.put(13, Material.GOLD_INGOT);
-        ShopClickListener.traenke_material.put(15, Material.GOLD_INGOT);
-        ShopClickListener.traenke_material.put(17, Material.IRON_INGOT);
-        ShopClickListener.traenke_price.put(9, 3);
-        ShopClickListener.traenke_price.put(11, 7);
-        ShopClickListener.traenke_price.put(13, 3);
-        ShopClickListener.traenke_price.put(15, 3);
-        ShopClickListener.traenke_price.put(17, 5);
-        ShopClickListener.spezial_material.put(9, Material.CLAY_BRICK);
-        ShopClickListener.spezial_material.put(10, Material.IRON_INGOT);
-        ShopClickListener.spezial_material.put(11, Material.IRON_INGOT);
-        ShopClickListener.spezial_material.put(12, Material.GOLD_INGOT);
-        ShopClickListener.spezial_material.put(13, Material.IRON_INGOT);
-        ShopClickListener.spezial_material.put(14, Material.GOLD_INGOT);
-        ShopClickListener.spezial_material.put(15, Material.GOLD_INGOT);
-        ShopClickListener.spezial_material.put(16, Material.GOLD_INGOT);
-        ShopClickListener.spezial_material.put(17, Material.CLAY_BRICK);
-        ShopClickListener.spezial_price.put(9, 4);
-        ShopClickListener.spezial_price.put(10, 5);
-        ShopClickListener.spezial_price.put(11, 7);
-        ShopClickListener.spezial_price.put(12, 3);
-        ShopClickListener.spezial_price.put(14, 3);
-        ShopClickListener.spezial_price.put(15, 3);
-        ShopClickListener.spezial_price.put(16, 13);
-        ShopClickListener.spezial_price.put(17, 16);
-        ShopClickListener.spezial_price.put(13, 3);
+    public int getAmount(Inventory inv, Material m) {
+        int count = 0;
+        for (ItemStack s : inv.getContents()) {
+            if (s != null) {
+                if (s.getType() == m) {
+                    count += s.getAmount();
+                }
+            }
+        }
+        return count;
     }
 }

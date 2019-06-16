@@ -2,8 +2,10 @@ package de.papiertuch.bedwars.listener;
 
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
+import de.papiertuch.bedwars.utils.BedWarsTeam;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +14,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -40,6 +43,20 @@ public class ProtectionListener implements Listener {
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getEntity().getType() == EntityType.ARMOR_STAND) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
+        if (BedWars.getInstance().getGameState() == GameState.INGAME) {
+            if (BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
+                BedWarsTeam bedWarsTeam = BedWars.getInstance().getGameHandler().getTeam(player);
+                if (event.getInventory().getName().equalsIgnoreCase(bedWarsTeam.getColor() + bedWarsTeam.getName())) {
+                    BedWars.getInstance().getTeamChest().put(bedWarsTeam, event.getInventory());
+                    player.playSound(player.getLocation(), Sound.CHEST_CLOSE, 1, 1);
+                }
+            }
         }
     }
 

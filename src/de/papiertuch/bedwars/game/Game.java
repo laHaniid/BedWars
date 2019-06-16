@@ -4,10 +4,10 @@ import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.utils.BedWarsTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Bed;
 
 import java.util.UUID;
 
@@ -48,8 +48,10 @@ public class Game {
                     }
                     for (UUID uuid : BedWars.getInstance().getSpectators()) {
                         Player spec = Bukkit.getPlayer(uuid);
-                        a.hidePlayer(spec);
-                        spec.showPlayer(a);
+                        if (spec != null) {
+                            a.hidePlayer(spec);
+                            spec.showPlayer(a);
+                        }
                     }
                 }
                 BedWars.getInstance().getBoard().updateBoard();
@@ -89,7 +91,6 @@ public class Game {
         BedWars.getInstance().getScheduler().getLobby().stopWaiting();
         BedWars.getInstance().getScheduler().getLobby().stopCountdown();
         Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.roundStarting"));
-        Bukkit.getWorld(BedWars.getInstance().getBedWarsConfig().getString("mapName")).getEntities().remove(EntityType.DROPPED_ITEM);
         BedWars.getInstance().getGameHandler().startSpawner();
         //TODO CloudNet Server Signs
         for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {

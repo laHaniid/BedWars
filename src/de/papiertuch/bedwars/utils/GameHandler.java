@@ -3,16 +3,18 @@ package de.papiertuch.bedwars.utils;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutChat;
 import org.bukkit.*;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -112,6 +114,36 @@ public class GameHandler {
         return BedWars.getInstance().getTabListGroups().get(BedWars.getInstance().getTabListGroups().size() - 1);
     }
 
+    public void copyFilesInDirectory(File from, File to) {
+        try {
+            if (to == null || from == null) return;
+
+            if (!to.exists()) to.mkdirs();
+
+            if (!from.isDirectory()) return;
+
+            for (File file : from.listFiles()) {
+                if (file == null) continue;
+
+                if (file.isDirectory()) {
+                    copyFilesInDirectory(file, new File(to.getAbsolutePath() + "/" + file.getName()));
+                } else {
+                    File n = new File(to.getAbsolutePath() + "/" + file.getName());
+                    Files.copy(file.toPath(), n.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void loadMap() {
+        String path = BedWars.getInstance().getBedWarsConfig().getString("mapName");
+        String target = "plugins/BedWars/mapBackup/" + path;
+        BedWars.getInstance().getGameHandler().copyFilesInDirectory(new File(target), new File(path));
+        Bukkit.createWorld(WorldCreator.name(path).type(WorldType.FLAT).generatorSettings("3;minecraft:air;2").generateStructures(false));
+    }
+
     public void checkTeams(Player player) {
         BedWarsTeam team = getTeam(player);
         if (!BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
@@ -198,7 +230,7 @@ public class GameHandler {
                     Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.CLAY_BRICK, 1).setName("§cBronze").build());
                 }
             }
-        }, 1, 10);
+        }, 1, 20 * BedWars.getInstance().getBedWarsConfig().getInt("bronzeSpawnRate"));
         Bukkit.getScheduler().runTaskTimer(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
@@ -209,7 +241,7 @@ public class GameHandler {
                     Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.IRON_INGOT, 1).setName("§fEisen").build());
                 }
             }
-        }, 0, 10 * 20);
+        }, 1, 20 * BedWars.getInstance().getBedWarsConfig().getInt("ironSpawnRate"));
         Bukkit.getScheduler().runTaskTimer(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
@@ -221,7 +253,7 @@ public class GameHandler {
                 }
 
             }
-        }, 0, 35 * 20);
+        }, 1, 20 * BedWars.getInstance().getBedWarsConfig().getInt("goldSpawnRate"));
     }
 
     public void sendToFallback(Player player) {

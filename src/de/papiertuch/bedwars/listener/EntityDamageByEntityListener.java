@@ -3,11 +3,13 @@ package de.papiertuch.bedwars.listener;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
 import de.papiertuch.bedwars.utils.BedWarsTeam;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 
 /**
  * Created by Leon on 15.06.2019.
@@ -37,13 +39,12 @@ public class EntityDamageByEntityListener implements Listener {
                 event.setCancelled(true);
             } else {
                 BedWars.getInstance().getLastHit().put(player, damager);
-            }
-            if (event.getCause() == EntityDamageEvent.DamageCause.PROJECTILE) {
-                if (TeamD == TeamP) {
-                    event.setCancelled(true);
-                } else {
-                    BedWars.getInstance().getLastHit().put(player, damager);
-                }
+                Bukkit.getScheduler().runTaskLater(BedWars.getInstance(), new Runnable() {
+                    @Override
+                    public void run() {
+                        BedWars.getInstance().getLastHit().remove(player);
+                    }
+                }, 20 * 10);
             }
         } catch (Exception ignored) {
         }

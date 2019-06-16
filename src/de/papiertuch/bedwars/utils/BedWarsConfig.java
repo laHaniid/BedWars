@@ -1,8 +1,5 @@
 package de.papiertuch.bedwars.utils;
 
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -35,24 +32,54 @@ public class BedWarsConfig {
         configuration.addDefault("mode", "4x2");
         configuration.addDefault("minPlayers", 2);
         configuration.addDefault("mapName", "Palast");
+        configuration.addDefault("bronzeSpawnRate", 1);
+        configuration.addDefault("ironSpawnRate", 10);
+        configuration.addDefault("goldSpawnRate", 35);
 
         configuration.addDefault("mysql.host", "localhost");
-        configuration.addDefault("mysql.dataBase", "bedWars");
-        configuration.addDefault("mysql.user", "root");
-        configuration.addDefault("mysql.password", "1234");
+        configuration.addDefault("mysql.dataBase", "papiertuch");
+        configuration.addDefault("mysql.user", "sonnymc");
+        configuration.addDefault("mysql.password", "kdeu2qj0e2qeque07eqj0e2qhj0euh0q2");
 
-        configuration.addDefault("item.team.material", "ARMOR_STAND");
-        configuration.addDefault("item.team.name", "&6Teams &8\u00BB &7Rechtsklick");
-        configuration.addDefault("item.team.slot", 0);
-        configuration.addDefault("item.leave.material", "BARRIER");
-        configuration.addDefault("item.leave.name", "&cZur Lobby &8\u00BB &7Rechtsklick");
-        configuration.addDefault("item.leave.slot", 8);
-        configuration.addDefault("item.compass.material", "COMPASS");
-        configuration.addDefault("item.compass.name", "&aSpieler &8\u00BB &7Rechtsklick");
-        configuration.addDefault("item.compass.slot", 4);
-        configuration.addDefault("item.start.material", "PAPER");
-        configuration.addDefault("item.start.name", "&bSpiel starten &8\u00BB &7Rechtsklick");
-        configuration.addDefault("item.start.slot", 4);
+        List<String> teams = new ArrayList<>();
+        teams.add("Blau");
+        teams.add("Rot");
+        teams.add("Gr\u00FCn");
+        teams.add("Gelb");
+        configuration.addDefault("teams", teams);
+
+        configuration.addDefault("Blau.colorCode", "&9");
+        configuration.addDefault("Blau.color", "BLUE");
+
+        configuration.addDefault("Rot.colorCode", "&c");
+        configuration.addDefault("Rot.color", "RED");
+
+        configuration.addDefault("Gr\u00FCn.colorCode", "&a");
+        configuration.addDefault("Gr\u00FCn.color", "LIME");
+
+        configuration.addDefault("Gelb.colorCode", "&e");
+        configuration.addDefault("Gelb.color", "YELLOW");
+
+        List<String> tabList = new ArrayList<>();
+        tabList.add("Admin");
+        tabList.add("Spieler");
+        configuration.addDefault("tabList", tabList);
+
+        configuration.addDefault("Admin.prefix", "&c&lAdmin &8\u258E &f");
+        configuration.addDefault("Admin.suffix", "&c");
+        configuration.addDefault("Admin.display", "&c");
+        configuration.addDefault("Admin.tagId", 9998);
+        configuration.addDefault("Admin.permission", "bedwars.admin");
+
+        configuration.addDefault("Spieler.prefix", "&f");
+        configuration.addDefault("Spieler.suffix", "&f");
+        configuration.addDefault("Spieler.display", "&f");
+        configuration.addDefault("Spieler.tagId", 9999);
+        configuration.addDefault("Spieler.permission", "bedwars.Spieler");
+
+        configuration.addDefault("command.setup.permission", "bedwars.setup");
+        configuration.addDefault("command.start.permission", "bedwars.start");
+        configuration.addDefault("command.start.seconds", 5);
 
         configuration.addDefault("message.gameStarting", "%prefix% &aDas Spiel wird gestartet...");
         configuration.addDefault("message.gameStartingIn", "%prefix% &7Das &a&lSpiel &7startet in &a&l%seconds% &7Sekunden");
@@ -92,11 +119,226 @@ public class BedWarsConfig {
         configuration.addDefault("message.leaveGame", "%prefix% %player% &7hat das Spiel verlassen");
         configuration.addDefault("message.stats", "%prefix% &7Stats von %player%");
 
+        configuration.addDefault("item.team.material", "ARMOR_STAND");
+        configuration.addDefault("item.team.name", "&6Teams &8\u00BB &7Rechtsklick");
+        configuration.addDefault("item.team.slot", 0);
+        configuration.addDefault("item.leave.material", "BARRIER");
+        configuration.addDefault("item.leave.name", "&cZur Lobby &8\u00BB &7Rechtsklick");
+        configuration.addDefault("item.leave.slot", 8);
+        configuration.addDefault("item.compass.material", "COMPASS");
+        configuration.addDefault("item.compass.name", "&aSpieler &8\u00BB &7Rechtsklick");
+        configuration.addDefault("item.compass.slot", 4);
+        configuration.addDefault("item.start.material", "PAPER");
+        configuration.addDefault("item.start.name", "&bSpiel starten &8\u00BB &7Rechtsklick");
+        configuration.addDefault("item.start.slot", 4);
+
+        configuration.addDefault("inventory.shop.title", "&8\u00BB &6Haupt");
+
+        configuration.addDefault("inventory.shop.bricks.name", "&8\u00BB &6Steine");
+        configuration.addDefault("inventory.shop.bricks.item", "STAINED_CLAY");
+        configuration.addDefault("inventory.shop.armor.name", "&8\u00BB &6R\u00FCstung");
+        configuration.addDefault("inventory.shop.armor.item", "CHAINMAIL_CHESTPLATE");
+        configuration.addDefault("inventory.shop.tools.name", "&8\u00BB &6Spitzhacken");
+        configuration.addDefault("inventory.shop.tools.item", "STONE_PICKAXE");
+        configuration.addDefault("inventory.shop.swords.name", "&8\u00BB &6Schwerter");
+        configuration.addDefault("inventory.shop.swords.item", "WOOD_SWORD");
+        configuration.addDefault("inventory.shop.bows.name", "&8\u00BB &6B\u00F6gen");
+        configuration.addDefault("inventory.shop.bows.item", "BOW");
+        configuration.addDefault("inventory.shop.food.name", "&8\u00BB &6Essen");
+        configuration.addDefault("inventory.shop.food.item", "COOKED_BEEF");
+        configuration.addDefault("inventory.shop.chests.name", "&8\u00BB &6Kisten");
+        configuration.addDefault("inventory.shop.chests.item", "CHEST");
+        configuration.addDefault("inventory.shop.potions.name", "&8\u00BB &6Tr\u00E4nke");
+        configuration.addDefault("inventory.shop.potions.item", "GLASS_BOTTLE");
+        configuration.addDefault("inventory.shop.specials.name", "&8\u00BB &6Extras");
+        configuration.addDefault("inventory.shop.specials.item", "EMERALD");
+
+        configuration.addDefault("inventory.shop.item.bricks.name", "&8\u00BB &aBl\u00F6cke");
+        configuration.addDefault("inventory.shop.item.bricks.amount", 2);
+        configuration.addDefault("inventory.shop.item.bricks.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.bricks.price.price", 1);
+        configuration.addDefault("inventory.shop.item.endStone.name", "&8\u00BB &aEndsteine");
+        configuration.addDefault("inventory.shop.item.endStone.amount", 1);
+        configuration.addDefault("inventory.shop.item.endStone.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.endStone.price.price", 8);
+        configuration.addDefault("inventory.shop.item.ironBlock.name", "&8\u00BB &aEisenblock");
+        configuration.addDefault("inventory.shop.item.ironBlock.amount", 1);
+        configuration.addDefault("inventory.shop.item.ironBlock.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.ironBlock.price.price", 3);
+        configuration.addDefault("inventory.shop.item.glass.name", "&8\u00BB &aGlass");
+        configuration.addDefault("inventory.shop.item.glass.amount", 1);
+        configuration.addDefault("inventory.shop.item.glass.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.glass.price.price", 4);
+        configuration.addDefault("inventory.shop.item.glowStone.name", "&8\u00BB &aLicht");
+        configuration.addDefault("inventory.shop.item.glowStone.amount", 1);
+        configuration.addDefault("inventory.shop.item.glowStone.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.glowStone.price.price", 4);
+
+        configuration.addDefault("inventory.shop.item.helmet.name", "&8\u00BB &aHelm");
+        configuration.addDefault("inventory.shop.item.helmet.amount", 1);
+        configuration.addDefault("inventory.shop.item.helmet.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.helmet.price.price", 1);
+        configuration.addDefault("inventory.shop.item.leggings.name", "&8\u00BB &aHose");
+        configuration.addDefault("inventory.shop.item.leggings.amount", 1);
+        configuration.addDefault("inventory.shop.item.leggings.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.leggings.price.price", 1);
+        configuration.addDefault("inventory.shop.item.boots.name", "&8\u00BB &aSchuhe");
+        configuration.addDefault("inventory.shop.item.boots.amount", 1);
+        configuration.addDefault("inventory.shop.item.boots.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.boots.price.price", 1);
+        configuration.addDefault("inventory.shop.item.chestPlate1.name", "&8\u00BB &aBrustpanzer I");
+        configuration.addDefault("inventory.shop.item.chestPlate1.amount", 1);
+        configuration.addDefault("inventory.shop.item.chestPlate1.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.chestPlate1.price.price", 1);
+        configuration.addDefault("inventory.shop.item.chestPlate2.name", "&8\u00BB &aBrustpanzer II");
+        configuration.addDefault("inventory.shop.item.chestPlate2.amount", 1);
+        configuration.addDefault("inventory.shop.item.chestPlate2.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.chestPlate2.price.price", 3);
+        configuration.addDefault("inventory.shop.item.chestPlate3.name", "&8\u00BB &aBrustpanzer III");
+        configuration.addDefault("inventory.shop.item.chestPlate3.amount", 1);
+        configuration.addDefault("inventory.shop.item.chestPlate3.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.chestPlate3.price.price", 5);
+        configuration.addDefault("inventory.shop.item.chestPlate4.name", "&8\u00BB &aBrustpanzer IV");
+        configuration.addDefault("inventory.shop.item.chestPlate4.amount", 1);
+        configuration.addDefault("inventory.shop.item.chestPlate4.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.chestPlate4.price.price", 7);
+
+        configuration.addDefault("inventory.shop.item.woodPickAxe.name", "&8\u00BB &aHolzspitzhacke");
+        configuration.addDefault("inventory.shop.item.woodPickAxe.amount", 1);
+        configuration.addDefault("inventory.shop.item.woodPickAxe.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.woodPickAxe.price.price", 4);
+        configuration.addDefault("inventory.shop.item.stonePickAxe.name", "&8\u00BB &aSteinspitzhacke");
+        configuration.addDefault("inventory.shop.item.stonePickAxe.amount", 1);
+        configuration.addDefault("inventory.shop.item.stonePickAxe.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.stonePickAxe.price.price", 2);
+        configuration.addDefault("inventory.shop.item.ironPickAxe.name", "&8\u00BB &aEisenspitzhacke");
+        configuration.addDefault("inventory.shop.item.ironPickAxe.amount", 1);
+        configuration.addDefault("inventory.shop.item.ironPickAxe.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.ironPickAxe.price.price", 1);
+
+        configuration.addDefault("inventory.shop.item.stick.name", "&8\u00BB &aStock");
+        configuration.addDefault("inventory.shop.item.stick.amount", 1);
+        configuration.addDefault("inventory.shop.item.stick.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.stick.price.price", 8);
+        configuration.addDefault("inventory.shop.item.sword1.name", "&8\u00BB &aHolzschwert I");
+        configuration.addDefault("inventory.shop.item.sword1.amount", 1);
+        configuration.addDefault("inventory.shop.item.sword1.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.sword1.price.price", 1);
+        configuration.addDefault("inventory.shop.item.sword2.name", "&8\u00BB &aHolzschwert II");
+        configuration.addDefault("inventory.shop.item.sword2.amount", 1);
+        configuration.addDefault("inventory.shop.item.sword2.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.sword2.price.price", 3);
+        configuration.addDefault("inventory.shop.item.sword3.name", "&8\u00BB &aHolzschwert III");
+        configuration.addDefault("inventory.shop.item.sword3.amount", 1);
+        configuration.addDefault("inventory.shop.item.sword3.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.sword3.price.price", 5);
+        configuration.addDefault("inventory.shop.item.sword4.name", "&8\u00BB &aEisenschwert");
+        configuration.addDefault("inventory.shop.item.sword4.amount", 1);
+        configuration.addDefault("inventory.shop.item.sword4.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.sword4.price.price", 5);
+
+        configuration.addDefault("inventory.shop.item.bow1.name", "&8\u00BB &aBogen I");
+        configuration.addDefault("inventory.shop.item.bow1.amount", 1);
+        configuration.addDefault("inventory.shop.item.bow1.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.bow1.price.price", 3);
+        configuration.addDefault("inventory.shop.item.bow2.name", "&8\u00BB &aBogen II");
+        configuration.addDefault("inventory.shop.item.bow2.amount", 1);
+        configuration.addDefault("inventory.shop.item.bow2.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.bow2.price.price", 6);
+        configuration.addDefault("inventory.shop.item.bow3.name", "&8\u00BB &aBogen III");
+        configuration.addDefault("inventory.shop.item.bow3.amount", 1);
+        configuration.addDefault("inventory.shop.item.bow3.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.bow3.price.price", 9);
+        configuration.addDefault("inventory.shop.item.arrow.name", "&8\u00BB &aPfeil");
+        configuration.addDefault("inventory.shop.item.arrow.amount", 8);
+        configuration.addDefault("inventory.shop.item.arrow.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.arrow.price.price", 4);
+
+        configuration.addDefault("inventory.shop.item.apple.name", "&8\u00BB &aApfel");
+        configuration.addDefault("inventory.shop.item.apple.amount", 1);
+        configuration.addDefault("inventory.shop.item.apple.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.apple.price.price", 1);
+        configuration.addDefault("inventory.shop.item.beef.name", "&8\u00BB &aFleisch");
+        configuration.addDefault("inventory.shop.item.beef.amount", 1);
+        configuration.addDefault("inventory.shop.item.beef.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.beef.price.price", 2);
+        configuration.addDefault("inventory.shop.item.cake.name", "&8\u00BB &aKuchen");
+        configuration.addDefault("inventory.shop.item.cake.amount", 1);
+        configuration.addDefault("inventory.shop.item.cake.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.cake.price.price", 1);
+        configuration.addDefault("inventory.shop.item.goldenApple.name", "&8\u00BB &aGold Apfel");
+        configuration.addDefault("inventory.shop.item.goldenApple.amount", 1);
+        configuration.addDefault("inventory.shop.item.goldenApple.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.goldenApple.price.price", 2);
+
+        configuration.addDefault("inventory.shop.item.chest.name", "&8\u00BB &aKiste");
+        configuration.addDefault("inventory.shop.item.chest.amount", 1);
+        configuration.addDefault("inventory.shop.item.chest.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.chest.price.price", 1);
+        configuration.addDefault("inventory.shop.item.endChest.name", "&8\u00BB &aEnderkiste");
+        configuration.addDefault("inventory.shop.item.endChest.amount", 1);
+        configuration.addDefault("inventory.shop.item.endChest.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.endChest.price.price", 1);
+
+        configuration.addDefault("inventory.shop.item.healing1.name", "&8\u00BB &aHeltrank I");
+        configuration.addDefault("inventory.shop.item.healing1.amount", 1);
+        configuration.addDefault("inventory.shop.item.healing1.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.healing1.price.price", 3);
+        configuration.addDefault("inventory.shop.item.healing2.name", "&8\u00BB &aHeiltrank II");
+        configuration.addDefault("inventory.shop.item.healing2.amount", 1);
+        configuration.addDefault("inventory.shop.item.healing2.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.healing2.price.price", 6);
+        configuration.addDefault("inventory.shop.item.strength.name", "&8\u00BB &aSt\u00E4rketrank");
+        configuration.addDefault("inventory.shop.item.strength.amount", 1);
+        configuration.addDefault("inventory.shop.item.strength.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.strength.price.price", 3);
+        configuration.addDefault("inventory.shop.item.regeneration.name", "&8\u00BB &aRegenerationstrank");
+        configuration.addDefault("inventory.shop.item.regeneration.amount", 1);
+        configuration.addDefault("inventory.shop.item.regeneration.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.regeneration.price.price", 3);
+        configuration.addDefault("inventory.shop.item.speed.name", "&8\u00BB &aSchnelligkeitstrank");
+        configuration.addDefault("inventory.shop.item.speed.amount", 1);
+        configuration.addDefault("inventory.shop.item.speed.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.speed.price.price", 4);
+
+        configuration.addDefault("inventory.shop.item.ladder.name", "&8\u00BB &aLeiter");
+        configuration.addDefault("inventory.shop.item.ladder.amount", 1);
+        configuration.addDefault("inventory.shop.item.ladder.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.ladder.price.price", 4);
+        configuration.addDefault("inventory.shop.item.web.name", "&8\u00BB &aSpinnennetz");
+        configuration.addDefault("inventory.shop.item.web.amount", 1);
+        configuration.addDefault("inventory.shop.item.web.price.material", "CLAY_BRICK");
+        configuration.addDefault("inventory.shop.item.web.price.price", 16);
+        configuration.addDefault("inventory.shop.item.warp.name", "&8\u00BB &aTeleporter");
+        configuration.addDefault("inventory.shop.item.warp.amount", 1);
+        configuration.addDefault("inventory.shop.item.warp.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.warp.price.price", 5);
+        configuration.addDefault("inventory.shop.item.shop.name", "&8\u00BB &aMobiler Shop");
+        configuration.addDefault("inventory.shop.item.shop.amount", 1);
+        configuration.addDefault("inventory.shop.item.shop.price.material", "IRON_INGOT");
+        configuration.addDefault("inventory.shop.item.shop.price.price", 7);
+        configuration.addDefault("inventory.shop.item.tnt.name", "&8\u00BB &aTNT");
+        configuration.addDefault("inventory.shop.item.tnt.amount", 1);
+        configuration.addDefault("inventory.shop.item.tnt.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.tnt.price.price", 3);
+        configuration.addDefault("inventory.shop.item.egg.name", "&8\u00BB &aFallschirm");
+        configuration.addDefault("inventory.shop.item.egg.amount", 1);
+        configuration.addDefault("inventory.shop.item.egg.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.egg.price.price", 3);
+        configuration.addDefault("inventory.shop.item.rescue.name", "&8\u00BB &aRettungsplatform");
+        configuration.addDefault("inventory.shop.item.rescue.amount", 1);
+        configuration.addDefault("inventory.shop.item.rescue.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.rescue.price.price", 4);
+        configuration.addDefault("inventory.shop.item.pearl.name", "&8\u00BB &aEnderperle");
+        configuration.addDefault("inventory.shop.item.pearl.amount", 1);
+        configuration.addDefault("inventory.shop.item.pearl.price.material", "GOLD_INGOT");
+        configuration.addDefault("inventory.shop.item.pearl.price.price", 13);
+
         configuration.addDefault("motd.lobby", "§a§lLOBBY");
         configuration.addDefault("motd.ingame", "§6§lINGAME");
         configuration.addDefault("motd.ending", "§c§lENDING");
 
-        configuration.addDefault("chat.format.spectators", "&7[Spec] %player% &8\u00BB &7%message%");
+        configuration.addDefault("chat.format.spectators", "&8[&4\u2716&8] %player% &8\u00BB &7%message%");
         configuration.addDefault("chat.format.normal", "%player% &8\u00BB &7%message%");
         configuration.addDefault("chat.format.team", "%player% &8\u00BB &7%message%");
         configuration.addDefault("chat.format.all", "&8[&f&lGlobal&8] %player% &8\u00BB&7%message%");
@@ -124,50 +366,9 @@ public class BedWarsConfig {
         configuration.addDefault("scoreboard.line.teamDeath.one", " &r&8\u00BB &4\u2716 %team%");
         configuration.addDefault("scoreboard.line.teamDeath.two", "&m%team%&r");
 
-        configuration.addDefault("scoreboard.teams.prefix", "&8\u2716 %team%");
-        configuration.addDefault("scoreboard.spectator.prefix", "&4\u2716 &f");
-        configuration.addDefault("scoreboard.spectator.display", "&f");
-
-
-        configuration.addDefault("command.setup.permission", "bedwars.setup");
-        configuration.addDefault("command.start.permission", "bedwars.start");
-        configuration.addDefault("command.start.seconds", 5);
-
-        List<String> teams = new ArrayList<>();
-        teams.add("Blau");
-        teams.add("Rot");
-        teams.add("Lila");
-        teams.add("Gelb");
-        configuration.addDefault("teams", teams);
-
-        configuration.addDefault("Blau.colorCode", "&9");
-        configuration.addDefault("Blau.color", "BLUE");
-
-        configuration.addDefault("Rot.colorCode", "&c");
-        configuration.addDefault("Rot.color", "RED");
-
-        configuration.addDefault("Lila.colorCode", "&5");
-        configuration.addDefault("Lila.color", "PURPLE");
-
-        configuration.addDefault("Gelb.colorCode", "&e");
-        configuration.addDefault("Gelb.color", "YELLOW");
-
-        List<String> tabList = new ArrayList<>();
-        tabList.add("Admin");
-        tabList.add("Spieler");
-        configuration.addDefault("tabList", tabList);
-
-        configuration.addDefault("Admin.prefix", "&c&lAdmin &8\u258E &f");
-        configuration.addDefault("Admin.suffix", "&c");
-        configuration.addDefault("Admin.display", "&c");
-        configuration.addDefault("Admin.tagId", 9998);
-        configuration.addDefault("Admin.permission", "bedwars.admin");
-
-        configuration.addDefault("Spieler.prefix", "&f");
-        configuration.addDefault("Spieler.suffix", "&f");
-        configuration.addDefault("Spieler.display", "&f");
-        configuration.addDefault("Spieler.tagId", 9999);
-        configuration.addDefault("Spieler.permission", "bedwars.Spieler");
+        configuration.addDefault("scoreboard.teams.prefix", "&8\u00BB %team%");
+        configuration.addDefault("scoreboard.spectator.prefix", "&8\u00BB &7");
+        configuration.addDefault("scoreboard.spectator.display", "&7");
 
         try {
             configuration.save(file);

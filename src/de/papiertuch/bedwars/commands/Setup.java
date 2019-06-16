@@ -7,7 +7,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Created by Leon on 15.06.2019.
@@ -39,12 +42,18 @@ public class Setup implements CommandExecutor {
                 for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
                     player.sendMessage("§8» " + team.getColor() + team.getName());
                 }
+            } else if (args[0].equalsIgnoreCase("saveMap")) {
+                String path = BedWars.getInstance().getBedWarsConfig().getString("mapName");
+                String target = "plugins/BedWars/mapBackup/" + path;
+                BedWars.getInstance().getGameHandler().copyFilesInDirectory(new File(path), new File(target));
+                player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Die aktuelle §e§lMap §7wurde als Backup gespeichert");
             } else if (args[0].equalsIgnoreCase("status")) {
                 player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Setup Infos:");
                 if (!BedWars.getInstance().getLocationAPI().getFile().exists()) {
                     player.sendMessage("§cEs wurden keine Locations gefunden...");
                     return true;
                 }
+                player.sendMessage("§8» §f§lMapBackup §8» " + (new File(BedWars.getInstance().getBedWarsConfig().getString("mapName")).exists() ? "§a✔" : "§c✖"));
                 player.sendMessage("§8» §f§lLobbySpawn §8» " + (BedWars.getInstance().getLocationAPI().isExists("lobby") ? "§a✔" : "§c✖"));
                 player.sendMessage("§8» §f§lSpectatorSpawn §8» " + (BedWars.getInstance().getLocationAPI().isExists("spectator") ? "§a✔" : "§c✖"));
                 player.sendMessage("§8» §f§lStatsWand §8» " + (BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall") == 10 ? "§a✔" : "§c✖"));
@@ -132,6 +141,7 @@ public class Setup implements CommandExecutor {
 
     private void sendHelp(Player p) {
         p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup status");
+        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup saveMap");
         p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup list");
         p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpawn <Team>");
         p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setBed <Team>");

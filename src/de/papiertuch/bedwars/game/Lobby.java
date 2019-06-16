@@ -33,6 +33,7 @@ public class Lobby {
                     xp = (((float) 1 / 60) * seconds);
                     a.setExp(xp);
                     a.showPlayer(a);
+                    a.canSee(a);
                     a.setLevel(seconds);
                     BedWarsTeam team = BedWars.getInstance().getGameHandler().getTeam(a);
                     if (team != null) {

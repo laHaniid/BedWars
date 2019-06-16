@@ -30,8 +30,9 @@ public class Stats implements CommandExecutor {
                 player.sendMessage("§8» §f§lPunkte §8» §e" + new StatsAPI(player).getInt("bedwars", "points"));
                 player.sendMessage("§8» §f§lKills §8» §e" + new StatsAPI(player).getInt("bedwars", "kills"));
                 player.sendMessage("§8» §f§lTode §8» §e" + new StatsAPI(player).getInt("bedwars", "deaths"));
-                player.sendMessage("§8» §f§lGewonnen §8» §e" + new StatsAPI(player).getInt("bedwars", "wins"));
                 player.sendMessage("§8» §f§lGespielt §8» §e" + new StatsAPI(player).getInt("bedwars", "played"));
+                player.sendMessage("§8» §f§lGewonnen §8» §e" + new StatsAPI(player).getInt("bedwars", "wins"));
+                player.sendMessage("§8» §f§lVerloren §8» §e" + (new StatsAPI(player).getInt("bedwars", "played") - new StatsAPI(player).getInt("bedwars", "wins")));
                 player.sendMessage("§8» §f§lBetten §8» §e" + new StatsAPI(player).getInt("bedwars", "bed"));
                 player.sendMessage("§7");
             }

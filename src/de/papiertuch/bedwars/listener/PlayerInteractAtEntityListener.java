@@ -1,7 +1,6 @@
 package de.papiertuch.bedwars.listener;
 
 import de.papiertuch.bedwars.BedWars;
-import de.papiertuch.bedwars.utils.ShopHandler;
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -21,7 +20,7 @@ public class PlayerInteractAtEntityListener implements Listener {
     public void onEntityInteract(PlayerInteractAtEntityEvent event) {
         Player player = event.getPlayer();
         if (event.getRightClicked().getType() == EntityType.ARMOR_STAND && BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
-            ShopHandler.openHauptInv(player);
+            player.openInventory(BedWars.getInstance().getShopHandler().getMainInventory());
             player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
             event.setCancelled(true);
         }
