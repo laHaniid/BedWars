@@ -44,7 +44,7 @@ public class BlockBreakListener implements Listener {
                 event.setCancelled(false);
                 return;
             }
-            if (BedWars.getInstance().getBlocks().contains(event.getBlock().getLocation())) {
+            if (BedWars.getInstance().getBlocks().contains(event.getBlock().getLocation()) || event.getBlock().getType() == Material.SLIME_BLOCK) {
                 event.setCancelled(false);
                 return;
             }

@@ -28,18 +28,18 @@ public class BedWarsConfig {
         configuration.options().copyDefaults(true);
 
         configuration.addDefault("prefix", "&8[&6&lBedWars&8]&7");
-        configuration.addDefault("builder", "Internet");
+        configuration.addDefault("builder", "Unbekannt");
         configuration.addDefault("mode", "4x2");
         configuration.addDefault("minPlayers", 2);
-        configuration.addDefault("mapName", "Palast");
+        configuration.addDefault("mapName", "Unbekannt");
         configuration.addDefault("bronzeSpawnRate", 1);
         configuration.addDefault("ironSpawnRate", 10);
         configuration.addDefault("goldSpawnRate", 35);
 
         configuration.addDefault("mysql.host", "localhost");
-        configuration.addDefault("mysql.dataBase", "papiertuch");
-        configuration.addDefault("mysql.user", "sonnymc");
-        configuration.addDefault("mysql.password", "kdeu2qj0e2qeque07eqj0e2qhj0euh0q2");
+        configuration.addDefault("mysql.dataBase", "bedWars");
+        configuration.addDefault("mysql.user", "root");
+        configuration.addDefault("mysql.password", "1234");
 
         List<String> teams = new ArrayList<>();
         teams.add("Blau");

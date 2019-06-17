@@ -8,6 +8,9 @@ import org.bukkit.Sound;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Leon on 14.06.2019.
  * development with love.
@@ -83,11 +86,24 @@ public class Lobby {
                         wb.setSize(50, 2000000);
                         break;
                     case 0:
-                        for (Player a : Bukkit.getOnlinePlayers()) {
-                            if (!BedWars.getInstance().getGameHandler().hasTeam(a)) {
-                                BedWars.getInstance().getGameHandler().getFreeTeamForPlayer(a);
+                        List<BedWarsTeam> list = new ArrayList<>();
+                        for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
+                            if (!team.getPlayers().isEmpty()) {
+                                list.add(team);
                             }
-                            BedWars.getInstance().getGameHandler().teleportToMap(a);
+                        }
+                        if (list.size() >= 2) {
+                            for (Player a : Bukkit.getOnlinePlayers()) {
+                                if (!BedWars.getInstance().getGameHandler().hasTeam(a)) {
+                                    BedWars.getInstance().getGameHandler().getFreeTeamForPlayer(a);
+                                }
+                                BedWars.getInstance().getGameHandler().teleportToMap(a);
+                            }
+                        } else {
+                            for (Player a : Bukkit.getOnlinePlayers()) {
+                                BedWars.getInstance().getGameHandler().getFreeTeamForPlayer(a);
+                                BedWars.getInstance().getGameHandler().teleportToMap(a);
+                            }
                         }
                         BedWars.getInstance().setGameState(GameState.INGAME);
                         BedWars.getInstance().getScheduler().getGame().startCountdown();

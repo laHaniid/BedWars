@@ -3,6 +3,7 @@ package de.papiertuch.bedwars.listener;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
 import de.papiertuch.bedwars.utils.BedWarsTeam;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -20,6 +21,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.Inventory;
 
 /**
  * Created by Leon on 15.06.2019.
@@ -63,12 +65,25 @@ public class ProtectionListener implements Listener {
     @EventHandler
     public void onInt(PlayerInteractEvent event) {
         try {
+            Player player = event.getPlayer();
             if (event.getClickedBlock().getType() == Material.NOTE_BLOCK) {
+                event.setCancelled(true);
+            }
+            if (event.getClickedBlock().getType() == Material.ENDER_CHEST) {
+                BedWarsTeam team = BedWars.getInstance().getGameHandler().getTeam(player);
+                if (BedWars.getInstance().getTeamChest().containsKey(team)) {
+                    player.openInventory(BedWars.getInstance().getTeamChest().get(team));
+                    player.playSound(player.getLocation(), Sound.CHEST_OPEN, 1, 1);
+                    event.setCancelled(true);
+                    return;
+                }
+                Inventory inventory = Bukkit.createInventory(null, 3 * 9, team.getColor() + team.getName());
+                player.openInventory(inventory);
+                player.playSound(player.getLocation(), Sound.CHEST_OPEN, 1, 1);
                 event.setCancelled(true);
             }
             if (event.getClickedBlock().getType() == Material.SKULL_ITEM || event.getClickedBlock().getType() == Material.SKULL) {
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    Player player = event.getPlayer();
                     event.setCancelled(true);
                     if (BedWars.getInstance().getSetupStatsWall().containsKey(player.getUniqueId())) {
                         int count = BedWars.getInstance().getSetupStatsWall().get(player.getUniqueId());
@@ -81,7 +96,6 @@ public class ProtectionListener implements Listener {
             }
             if (event.getClickedBlock().getType() == Material.BED_BLOCK || event.getClickedBlock().getType() == Material.BED) {
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-                    Player player = event.getPlayer();
                     event.setCancelled(true);
                     if (BedWars.getInstance().getSetupBed().containsKey(player.getUniqueId())) {
                         BedWars.getInstance().getLocationAPI().setLocation("bed." + BedWars.getInstance().getSetupBed().get(player.getUniqueId()).toLowerCase(), event.getClickedBlock().getLocation());
