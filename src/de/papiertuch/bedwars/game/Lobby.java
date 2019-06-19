@@ -8,9 +8,6 @@ import org.bukkit.Sound;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Leon on 14.06.2019.
  * development with love.
@@ -23,7 +20,7 @@ public class Lobby {
     private static int taskID, waitingID;
     private float xp = 1.00f;
     private boolean isRunning = false;
-    private static boolean waiting = true;
+    private static boolean waiting = false;
 
 
     public void startCountdown() {
@@ -36,7 +33,6 @@ public class Lobby {
                     xp = (((float) 1 / 60) * seconds);
                     a.setExp(xp);
                     a.showPlayer(a);
-                    a.canSee(a);
                     a.setLevel(seconds);
                     BedWarsTeam team = BedWars.getInstance().getGameHandler().getTeam(a);
                     if (team != null) {
@@ -45,21 +41,21 @@ public class Lobby {
                 }
                 switch (seconds) {
                     case 60:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.gameStarting"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStarting"));
                         playSound();
                         break;
                     case 45:
                     case 30:
                     case 10:
                     case 5:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
                         playSound();
                         break;
                     case 15:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.builder")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.builder")
                                 .replace("%builder%", BedWars.getInstance().getBedWarsConfig().getString("builder")));
                         playSound();
                         for (Player a : Bukkit.getOnlinePlayers()) {
@@ -68,7 +64,7 @@ public class Lobby {
                         break;
                     case 3:
                     case 2:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
                         playSound();
                         for (Player a : Bukkit.getOnlinePlayers()) {
@@ -76,7 +72,7 @@ public class Lobby {
                         }
                         break;
                     case 1:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingInOneSecond"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingInOneSecond"));
                         playSound();
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             a.sendTitle("§eStart", "");
@@ -86,25 +82,12 @@ public class Lobby {
                         wb.setSize(50, 2000000);
                         break;
                     case 0:
-                        List<BedWarsTeam> list = new ArrayList<>();
-                        for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
-                            if (!team.getPlayers().isEmpty()) {
-                                list.add(team);
-                            }
-                        }
-                        if (list.size() >= 2) {
                             for (Player a : Bukkit.getOnlinePlayers()) {
                                 if (!BedWars.getInstance().getGameHandler().hasTeam(a)) {
                                     BedWars.getInstance().getGameHandler().getFreeTeamForPlayer(a);
                                 }
                                 BedWars.getInstance().getGameHandler().teleportToMap(a);
                             }
-                        } else {
-                            for (Player a : Bukkit.getOnlinePlayers()) {
-                                BedWars.getInstance().getGameHandler().getFreeTeamForPlayer(a);
-                                BedWars.getInstance().getGameHandler().teleportToMap(a);
-                            }
-                        }
                         BedWars.getInstance().setGameState(GameState.INGAME);
                         BedWars.getInstance().getScheduler().getGame().startCountdown();
                         stopCountdown();

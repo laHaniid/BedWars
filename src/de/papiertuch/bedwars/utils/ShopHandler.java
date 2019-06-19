@@ -394,6 +394,7 @@ public class ShopHandler {
                     removeItems(player.getInventory(), setMaterial, amount * canBuy);
                     for (int c = 0; c < canBuy; c++) {
                         player.getInventory().addItem(new ItemStack[]{itemStack});
+                       // player.getInventory().addItem(new ItemBuilder(itemStack).removeLore().removeName().build());
                     }
                     player.updateInventory();
                 }

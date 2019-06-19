@@ -23,7 +23,7 @@ public class Setup implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         Player player = (Player) commandSender;
-        if (player.hasPermission(BedWars.getInstance().getBedWarsConfig().getString("command.setup.permission"))) {
+        if (player.hasPermission(BedWars.getInstance().getBedWarsConfig().getString("commands.setup.permission"))) {
             if (args.length == 0) {
                 sendHelp(player);
             } else if (args[0].equalsIgnoreCase("setSpawn")) {

@@ -31,10 +31,12 @@ public class BedWarsConfig {
         configuration.addDefault("builder", "Unbekannt");
         configuration.addDefault("mode", "4x2");
         configuration.addDefault("minPlayers", 2);
-        configuration.addDefault("mapName", "Unbekannt");
+        configuration.addDefault("mapName", "Map");
         configuration.addDefault("bronzeSpawnRate", 1);
         configuration.addDefault("ironSpawnRate", 10);
         configuration.addDefault("goldSpawnRate", 35);
+        configuration.addDefault("shopType", "ARMOR_STAND");
+        configuration.addDefault("cloudnet", false);
 
         configuration.addDefault("mysql.host", "localhost");
         configuration.addDefault("mysql.dataBase", "bedWars");
@@ -55,7 +57,7 @@ public class BedWarsConfig {
         configuration.addDefault("Rot.color", "RED");
 
         configuration.addDefault("Gr\u00FCn.colorCode", "&a");
-        configuration.addDefault("Gr\u00FCn.color", "LIME");
+        configuration.addDefault("Gr\u00FCn.color", "GREEN");
 
         configuration.addDefault("Gelb.colorCode", "&e");
         configuration.addDefault("Gelb.color", "YELLOW");
@@ -77,16 +79,16 @@ public class BedWarsConfig {
         configuration.addDefault("Spieler.tagId", 9999);
         configuration.addDefault("Spieler.permission", "bedwars.Spieler");
 
-        configuration.addDefault("command.setup.permission", "bedwars.setup");
-        configuration.addDefault("command.start.permission", "bedwars.start");
-        configuration.addDefault("command.start.seconds", 5);
+        configuration.addDefault("commands.setup.permission", "bedwars.setup");
+        configuration.addDefault("commands.start.permission", "bedwars.start");
+        configuration.addDefault("commands.start.seconds", 5);
 
         configuration.addDefault("message.gameStarting", "%prefix% &aDas Spiel wird gestartet...");
         configuration.addDefault("message.gameStartingIn", "%prefix% &7Das &a&lSpiel &7startet in &a&l%seconds% &7Sekunden");
         configuration.addDefault("message.gameStartingInOneSecond", "%prefix% &7Das &a&lSpiel &7startet in &a&leiner &7Sekunde");
         configuration.addDefault("message.builder", "%prefix% &7Erbaut von&8: &e&l%builder%");
         configuration.addDefault("message.yourInTeam", "%prefix% &7Du bist nun im Team %team%");
-        configuration.addDefault("message.waiting", "%prefix% &7Warte auf &c&l%players%&7...");
+        configuration.addDefault("message.waiting", "%prefix% &7Warte auf &c&l%players% &S7pieler...");
         configuration.addDefault("message.teamWin", " %prefix% &7Das Team %team% &7hat gewonnen!");
         configuration.addDefault("message.boarderIn", "%prefix% &7Die &cBoarder &7verkleinert sich in &c&l%minutes% &7Minuten");
         configuration.addDefault("message.boarderInOneMinute", "%prefix% &7Die &cBoarder &7verkleinert sich in &c&leiner Minute");

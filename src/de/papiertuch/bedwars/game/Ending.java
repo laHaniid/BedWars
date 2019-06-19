@@ -2,7 +2,13 @@ package de.papiertuch.bedwars.game;
 
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
-import org.bukkit.*;
+import de.papiertuch.nickaddon.NickAddon;
+import de.papiertuch.nickaddon.utils.NickAPI;
+import net.haoshoku.nick.NickPlugin;
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Sound;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -17,6 +23,7 @@ public class Ending {
 
     private int seconds = 16;
     private int taskID;
+    private float xp = 1.00f;
 
     public void startCountdown() {
         BedWars.getInstance().setGameState(GameState.ENDING);
@@ -26,15 +33,15 @@ public class Ending {
             public void run() {
                 BedWars.getInstance().getBoard().updateBoard();
                 for (Player a : Bukkit.getOnlinePlayers()) {
-                    //TODO NICK API
-                    /*
-                    if (NickAPI.nickplayers.contains(a.getUniqueId())) {
-                        NickAPI.nickplayers.remove(a.getUniqueId());
-                        new NickAPI(a).setNick(false);
+                    if (Bukkit.getPluginManager().getPlugin("NickAddon") != null) {
+                        if (NickAddon.getInstance().getNickPlayers().contains(a.getUniqueId())) {
+                            new NickAPI(a).setNick(false);
+                        }
                     }
-                     */
+                    xp = (((float) 1 / 60) * seconds);
+                    a.setExp(xp);
+                    a.setLevel(seconds);
                     a.showPlayer(a);
-                    a.canSee(a);
                     a.setAllowFlight(false);
                     a.setFlying(false);
                     if (!BedWars.getInstance().getPlayers().contains(a.getUniqueId())) {
@@ -55,8 +62,8 @@ public class Ending {
                         break;
                     case 15:
                         startFirework();
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.roundEnds"));
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.roundEnds"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             a.playSound(a.getLocation(), Sound.LAVA_POP, 1, 1);
@@ -66,19 +73,19 @@ public class Ending {
                     case 5:
                     case 3:
                     case 2:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             a.playSound(a.getLocation(), Sound.LAVA_POP, 1, 1);
                         }
                         break;
                     case 1:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopInOneSecond"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopInOneSecond"));
                         for (Player a : Bukkit.getOnlinePlayers())
                             a.playSound(a.getLocation(), Sound.LAVA_POP, 1, 1);
                         break;
                     case 0:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.serverStop"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.serverStop"));
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             BedWars.getInstance().getGameHandler().sendToFallback(a);
                         }

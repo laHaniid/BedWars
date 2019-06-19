@@ -1,6 +1,7 @@
 package de.papiertuch.bedwars.listener;
 
 import de.papiertuch.bedwars.BedWars;
+import de.papiertuch.bedwars.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -70,42 +71,47 @@ public class ShopClickListener implements Listener {
                 }
                 if (name.equalsIgnoreCase(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.bricks.name"))) {
                     BedWars.getInstance().getShopHandler().buyItem(event,
-                            player, event.getCurrentItem(),
+                            player, new ItemBuilder(event.getCurrentItem()).removeName().removeLore().build(),
                             Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.bricks.price.material")),
                             BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.bricks.price.price"));
                     player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                    player.openInventory(BedWars.getInstance().getShopHandler().getBricksInventory(player, event.getClickedInventory().getName().replace(" §8┃ §aMenü", "")));
                     return;
                 }
                 if (name.equalsIgnoreCase(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.endStone.name"))) {
                     BedWars.getInstance().getShopHandler().buyItem(event,
-                            player, event.getCurrentItem(),
+                            player, new ItemBuilder(event.getCurrentItem()).removeName().removeLore().build(),
                             Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.endStone.price.material")),
                             BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.endStone.price.price"));
                     player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                    player.openInventory(BedWars.getInstance().getShopHandler().getBricksInventory(player, event.getClickedInventory().getName().replace(" §8┃ §aMenü", "")));
                     return;
                 }
                 if (name.equalsIgnoreCase(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.ironBlock.name"))) {
                     BedWars.getInstance().getShopHandler().buyItem(event,
-                            player, event.getCurrentItem(),
+                            player, new ItemBuilder(event.getCurrentItem()).removeName().removeLore().build(),
                             Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.ironBlock.price.material")),
                             BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.ironBlock.price.price"));
                     player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                    player.openInventory(BedWars.getInstance().getShopHandler().getBricksInventory(player, event.getClickedInventory().getName().replace(" §8┃ §aMenü", "")));
                     return;
                 }
                 if (name.equalsIgnoreCase(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.glass.name"))) {
                     BedWars.getInstance().getShopHandler().buyItem(event,
-                            player, event.getCurrentItem(),
+                            player, new ItemBuilder(event.getCurrentItem()).removeName().removeLore().build(),
                             Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.glass.price.material")),
                             BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.glass.price.price"));
                     player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                    player.openInventory(BedWars.getInstance().getShopHandler().getBricksInventory(player, event.getClickedInventory().getName().replace(" §8┃ §aMenü", "")));
                     return;
                 }
                 if (name.equalsIgnoreCase(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.glowStone.name"))) {
                     BedWars.getInstance().getShopHandler().buyItem(event,
-                            player, event.getCurrentItem(),
+                            player, new ItemBuilder(event.getCurrentItem()).removeName().removeLore().build(),
                             Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.glowStone.price.material")),
                             BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.glowStone.price.price"));
                     player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                    player.openInventory(BedWars.getInstance().getShopHandler().getBricksInventory(player, event.getClickedInventory().getName().replace(" §8┃ §aMenü", "")));
                     return;
                 }
                 if (name.equalsIgnoreCase(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.woodPickAxe.name"))) {
@@ -120,7 +126,7 @@ public class ShopClickListener implements Listener {
                     BedWars.getInstance().getShopHandler().buyItem(event,
                             player, event.getCurrentItem(),
                             Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("inventory.shop.item.stonePickAxe.price.material")),
-                            BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.stonePickAxe.item.price.price"));
+                            BedWars.getInstance().getBedWarsConfig().getInt("inventory.shop.item.stonePickAxe.price.price"));
                     player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
                     return;
                 }
@@ -413,7 +419,7 @@ public class ShopClickListener implements Listener {
                     return;
                 }
             }
-        } catch (NullPointerException ex) {
+        } catch (Exception ex) {
         }
     }
 }

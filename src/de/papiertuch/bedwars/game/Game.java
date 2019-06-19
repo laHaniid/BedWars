@@ -4,9 +4,7 @@ import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.utils.BedWarsTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -57,26 +55,26 @@ public class Game {
                 BedWars.getInstance().getBoard().updateBoard();
                 switch (minutes) {
                     case 1200:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.boarderIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.boarderIn")
                                 .replace("%minutes%", String.valueOf(20)));
                         break;
                     case 900:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.boarderIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.boarderIn")
                                 .replace("%minutes%", String.valueOf(15)));
                         break;
                     case 600:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.boarderIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.boarderIn")
                                 .replace("%minutes%", String.valueOf(10)));
                         break;
                     case 300:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.boarderIn")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.boarderIn")
                                 .replace("%minutes%", String.valueOf(5)));
                         break;
                     case 60:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.boarderInOneMinute"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.boarderInOneMinute"));
                         break;
                     case 0:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.boarder"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.boarder"));
                         BedWars.getInstance().getScheduler().getBoarder().startCountdown();
                         stopCountdown();
                         break;
@@ -90,9 +88,8 @@ public class Game {
     private void setGameStuff() {
         BedWars.getInstance().getScheduler().getLobby().stopWaiting();
         BedWars.getInstance().getScheduler().getLobby().stopCountdown();
-        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.roundStarting"));
+        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.roundStarting"));
         BedWars.getInstance().getGameHandler().startSpawner();
-        //TODO CloudNet Server Signs
         for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
             if (team.getPlayers().size() == 0) {
                 team.setBed(false);

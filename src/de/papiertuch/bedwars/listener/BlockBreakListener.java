@@ -58,7 +58,7 @@ public class BlockBreakListener implements Listener {
                     }
                     if (team.hasBed()) {
                         team.setBed(false);
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.destroyBed")
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.destroyBed")
                                 .replace("%player%", player.getDisplayName())
                                 .replace("%team%", team.getColor() + team.getName()));
                         player.playSound(player.getLocation(), Sound.LEVEL_UP, 1F, 1F);

@@ -38,8 +38,10 @@ public class Boarder {
                     }
                     for (UUID uuid : BedWars.getInstance().getSpectators()) {
                         Player spec = Bukkit.getPlayer(uuid);
-                        a.hidePlayer(spec);
-                        spec.showPlayer(a);
+                        if (spec != null) {
+                            a.hidePlayer(spec);
+                            spec.showPlayer(a);
+                        }
                     }
                 }
                 switch (minutes) {
@@ -50,14 +52,14 @@ public class Boarder {
                         for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
                             team.setBed(false);
                         }
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.destroyAllBeds"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.destroyAllBeds"));
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             a.playSound(a.getLocation(), Sound.WITHER_DEATH, 10F, 10F);
                             BedWars.getInstance().getBoard().setScoreBoard(a);
                         }
                         break;
                     case 0:
-                        Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.smallBoarder"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.smallBoarder"));
                         BedWars.getInstance().setGameState(GameState.ENDING);
                         stop();
                         BedWars.getInstance().getScheduler().getEnding().startCountdown();

@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,16 +75,14 @@ public class GameHandler {
         player.getInventory().setItem(0, new ItemStorage().getCompass());
         player.getInventory().setItem(8, new ItemStorage().getLeave());
         BedWars.getInstance().getBoard().addPlayerToBoard(player);
-        for (Player a : Bukkit.getOnlinePlayers()) {
-            for (UUID uuid : BedWars.getInstance().getSpectators()) {
-                Player spec = Bukkit.getPlayer(uuid);
-                a.hidePlayer(spec);
-            }
-        }
         Bukkit.getScheduler().runTaskLater(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
                 BedWars.getInstance().getBoard().addPlayerToBoard(player);
+                for (PotionEffect effect : player.getActivePotionEffects()) {
+                    player.removePotionEffect(effect.getType());
+                }
+                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 99999, 9999));
             }
         }, 20);
     }
@@ -149,7 +149,7 @@ public class GameHandler {
         if (!BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
             team.removePlayer(player.getUniqueId());
             if (team.getPlayers().size() == 0) {
-                Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.teamDeath")
+                sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.teamDeath")
                         .replace("%team%", team.getColor() + team.getName()));
                 BedWars.getInstance().getAliveTeams().remove(team);
                 team.setBed(false);
@@ -158,7 +158,7 @@ public class GameHandler {
                     BedWars.getInstance().getBoard().addPlayerToBoard(a);
                 }
             } else {
-                Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.teamReamingPlayers")
+                sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.teamReamingPlayers")
                         .replace("%team%", team.getColor() + team.getName())
                         .replace("%players%", String.valueOf(team.getPlayers().size())));
                 for (Player a : Bukkit.getOnlinePlayers()) {
@@ -211,10 +211,10 @@ public class GameHandler {
                 a.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.leave.slot"), new ItemStorage().getLeave());
                 a.sendTitle("§7Team " + winner.getColor() + winner.getName(), "§7hat gewonnen");
             }
-            Bukkit.broadcastMessage("§7");
-            Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.teamWin")
+            sendBroadCast("§7");
+            sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.teamWin")
                     .replace("%team%", winner.getColor() + winner.getName()));
-            Bukkit.broadcastMessage("§7");
+            sendBroadCast("§7");
             return;
         }
     }
@@ -230,7 +230,7 @@ public class GameHandler {
                     Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.CLAY_BRICK, 1).setName("§cBronze").build());
                 }
             }
-        }, 1, 20 * BedWars.getInstance().getBedWarsConfig().getInt("bronzeSpawnRate"));
+        }, 1, BedWars.getInstance().getBedWarsConfig().getInt("bronzeSpawnRate") == 0.5 ? 10 : 20 * BedWars.getInstance().getBedWarsConfig().getInt("bronzeSpawnRate"));
         Bukkit.getScheduler().runTaskTimer(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
@@ -257,7 +257,13 @@ public class GameHandler {
     }
 
     public void sendToFallback(Player player) {
-        player.kickPlayer("§cRestart");
+        player.kickPlayer(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDer Server startet jetzt neu...");
+    }
+
+    public void sendBroadCast(String message) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.sendMessage(message);
+        }
     }
 
     public void setPlayer(Player player) {
@@ -274,6 +280,9 @@ public class GameHandler {
             player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.team.slot"), new ItemStorage().getTeams());
         }
         player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.leave.slot"), new ItemStorage().getLeave());
+        for (PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+        }
     }
 
     public void getFreeTeamForPlayer(Player player) {

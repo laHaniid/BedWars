@@ -28,7 +28,7 @@ public class PlayerDeathListener implements Listener {
                 if (BedWars.getInstance().getLastHit().containsKey(player)) {
                     Player killer = BedWars.getInstance().getLastHit().get(player);
                     respawnPlayer(player);
-                    Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.killMessage")
+                    BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.killMessage")
                             .replace("%player%", player.getDisplayName())
                             .replace("%killer%", killer.getDisplayName()));
                     player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("message.killerLife")
@@ -47,7 +47,7 @@ public class PlayerDeathListener implements Listener {
                     BedWars.getInstance().getStatsHandler().addKill(killer);
                 } else {
                     respawnPlayer(player);
-                    Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.death")
+                    BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.death")
                     .replace("%player%", player.getDisplayName()));
                     BedWarsTeam team = BedWars.getInstance().getGameHandler().getTeam(player);
                     if (!team.hasBed()) {

@@ -3,6 +3,7 @@ package de.papiertuch.bedwars.listener;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
 import de.papiertuch.bedwars.utils.ItemStorage;
+import de.papiertuch.nickaddon.utils.NickAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,17 +24,15 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         if (BedWars.getInstance().getGameState() == GameState.LOBBY) {
             BedWars.getInstance().getStatsHandler().createPlayer(player);
+            if (Bukkit.getPluginManager().getPlugin("NickAddon") != null) {
+                if (new NickAPI(player).getAutoNickState()) {
+                    new NickAPI(player).setNick(true);
+                }
+            }
             BedWars.getInstance().getGameHandler().setPlayer(player);
-            if (player.hasPermission(BedWars.getInstance().getBedWarsConfig().getString("command.start.permission"))) {
+            if (player.hasPermission(BedWars.getInstance().getBedWarsConfig().getString("commands.start.permission"))) {
                 player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.start.slot"), new ItemStorage().getStartItem());
             }
-            //TODO NICK API
-            /*
-            if (new NickAPI(player).getAutoNickState()) {
-                new NickAPI(player).setNick(true);
-            }
-             */
-
             BedWars.getInstance().getBoard().addPlayerToBoard(player);
             event.setJoinMessage(BedWars.getInstance().getBedWarsConfig().getString("message.joinGame")
                     .replace("%player%", player.getDisplayName())
@@ -48,7 +47,7 @@ public class PlayerJoinListener implements Listener {
             }
             if (BedWars.getInstance().getPlayers().size() == BedWars.getInstance().getGameHandler().getMaxPlayers()) {
                 BedWars.getInstance().getScheduler().getLobby().setSeconds(30);
-                Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("message.gameStarting"));
+                BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStarting"));
             }
         }
         if (BedWars.getInstance().getGameState() == GameState.INGAME) {

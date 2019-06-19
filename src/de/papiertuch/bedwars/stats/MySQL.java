@@ -26,6 +26,10 @@ public class MySQL {
         }
     }
 
+    public void createTable() {
+        BedWars.getInstance().getMySQL().update("CREATE TABLE IF NOT EXISTS bedwars (UUID VARCHAR(100), NAME VARCHAR(100), KILLS INT, DEATHS INT, WINS INT, PLAYED INT, BED INT, POINTS INT)");
+    }
+
 
     public void disconnect() {
         try {

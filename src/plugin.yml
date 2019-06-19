@@ -2,6 +2,8 @@ name: BedWars
 author: Papiertuch
 version: 1.0-BETA
 main: de.papiertuch.bedwars.BedWars
+softdepend:
+  - CloudNetAPI
 commands:
   start:
   setup:

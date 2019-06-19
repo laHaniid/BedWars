@@ -50,6 +50,15 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder removeName() {
+        ItemMeta m = item.getItemMeta();
+        if (m.hasDisplayName()) {
+            m.setDisplayName(null);
+        }
+        item.setItemMeta(m);
+        return this;
+    }
+
     public ItemBuilder setMaterial( Material m ) {
         item.setType(m);
         return this;

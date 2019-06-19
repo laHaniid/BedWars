@@ -26,14 +26,14 @@ public class Stats implements CommandExecutor {
                 player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("message.stats")
                         .replace("%player%", player.getDisplayName()));
                 player.sendMessage("§7");
-                player.sendMessage("§8» §f§lPlatz §8» §e" + new StatsAPI(player).getRankingFromUUID("bedwars", "points"));
-                player.sendMessage("§8» §f§lPunkte §8» §e" + new StatsAPI(player).getInt("bedwars", "points"));
-                player.sendMessage("§8» §f§lKills §8» §e" + new StatsAPI(player).getInt("bedwars", "kills"));
-                player.sendMessage("§8» §f§lTode §8» §e" + new StatsAPI(player).getInt("bedwars", "deaths"));
-                player.sendMessage("§8» §f§lGespielt §8» §e" + new StatsAPI(player).getInt("bedwars", "played"));
-                player.sendMessage("§8» §f§lGewonnen §8» §e" + new StatsAPI(player).getInt("bedwars", "wins"));
-                player.sendMessage("§8» §f§lVerloren §8» §e" + (new StatsAPI(player).getInt("bedwars", "played") - new StatsAPI(player).getInt("bedwars", "wins")));
-                player.sendMessage("§8» §f§lBetten §8» §e" + new StatsAPI(player).getInt("bedwars", "bed"));
+                player.sendMessage("§8» §f§lPlatz §8» §e" + new StatsAPI(player).getRankingFromUUID());
+                player.sendMessage("§8» §f§lPunkte §8» §e" + new StatsAPI(player).getInt("POINTS"));
+                player.sendMessage("§8» §f§lKills §8» §e" + new StatsAPI(player).getInt("KILLS"));
+                player.sendMessage("§8» §f§lTode §8» §e" + new StatsAPI(player).getInt("DEATHS"));
+                player.sendMessage("§8» §f§lGespielt §8» §e" + new StatsAPI(player).getInt("PLAYED"));
+                player.sendMessage("§8» §f§lGewonnen §8» §e" + new StatsAPI(player).getInt("WINS"));
+                player.sendMessage("§8» §f§lVerloren §8» §e" + (new StatsAPI(player).getInt("PLAYED") - new StatsAPI(player).getInt("WINS")));
+                player.sendMessage("§8» §f§lBetten §8» §e" + new StatsAPI(player).getInt("BED"));
                 player.sendMessage("§7");
             }
         });

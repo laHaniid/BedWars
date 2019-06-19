@@ -25,26 +25,28 @@ public class AsyncPlayerChatListener implements Listener {
         event.setCancelled(true);
         String message = event.getMessage().replace("%", "%%");
         if (BedWars.getInstance().getGameState() == GameState.LOBBY || BedWars.getInstance().getGameState() == GameState.ENDING) {
-            Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("chat.format.normal")
+            BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("chat.format.normal")
                     .replace("%player%", player.getDisplayName())
                     .replace("%message%", message));
         } else if (BedWars.getInstance().getSpectators().contains(player.getUniqueId())) {
             for (UUID spec : BedWars.getInstance().getSpectators()) {
                 Player a = Bukkit.getPlayer(spec);
-                a.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("chat.format.spectators")
-                        .replace("%player%", player.getDisplayName())
-                        .replace("%message%", message));
+                if (a != null) {
+                    a.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("chat.format.spectators")
+                            .replace("%player%", player.getDisplayName())
+                            .replace("%message%", message));
+                }
             }
-        } else if (event.getMessage().startsWith("@all")) {
-            Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("chat.format.all")
+        } else if (message.startsWith("@all")) {
+            BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("chat.format.all")
                     .replace("%player%", player.getDisplayName())
                     .replace("%message%", message.replace("@all", "")));
-        } else if (event.getMessage().startsWith("@a")) {
-            Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("chat.format.all")
+        } else if (message.startsWith("@a")) {
+            BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("chat.format.all")
                     .replace("%player%", player.getDisplayName())
                     .replace("%message%", message.replace("@a", "")));
-        } else if (event.getMessage().startsWith("@")) {
-            Bukkit.broadcastMessage(BedWars.getInstance().getBedWarsConfig().getString("chat.format.all")
+        } else if (message.startsWith("@")) {
+            BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("chat.format.all")
                     .replace("%player%", player.getDisplayName())
                     .replace("%message%", message.replace("@", "")));
         } else {

@@ -40,11 +40,13 @@ public class PlayerInteractListener implements Listener {
                 Inventory inv = Bukkit.createInventory(null, 9 * 3, player.getItemInHand().getItemMeta().getDisplayName());
                 for (UUID s : BedWars.getInstance().getPlayers()) {
                     Player target = Bukkit.getPlayer(s);
-                    if (skulls.containsKey(player.getName())) {
-                        inv.addItem(new ItemBuilder(skulls.get(target.getName())).setName(target.getDisplayName()).build());
-                    } else {
-                        skulls.put(player.getName(), new ItemBuilder(Material.SKULL_ITEM, 1, 3).setSkullOwner(target.getName()).build());
-                        inv.addItem(new ItemBuilder(skulls.get(target.getName())).setName(target.getDisplayName()).build());
+                    if (target != null) {
+                        if (skulls.containsKey(target.getName())) {
+                            inv.addItem(new ItemBuilder(skulls.get(target.getName())).setName(target.getDisplayName()).build());
+                        } else {
+                            skulls.put(target.getName(), new ItemBuilder(Material.SKULL_ITEM, 1, 3).setSkullOwner(target.getName()).build());
+                            inv.addItem(new ItemBuilder(skulls.get(target.getName())).setName(target.getDisplayName()).build());
+                        }
                     }
                 }
                 player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);

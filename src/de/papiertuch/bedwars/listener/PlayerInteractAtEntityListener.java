@@ -19,7 +19,7 @@ public class PlayerInteractAtEntityListener implements Listener {
     @EventHandler
     public void onEntityInteract(PlayerInteractAtEntityEvent event) {
         Player player = event.getPlayer();
-        if (event.getRightClicked().getType() == EntityType.ARMOR_STAND && BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
+        if (event.getRightClicked().getType() == EntityType.valueOf(BedWars.getInstance().getBedWarsConfig().getString("shopType")) && BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
             player.openInventory(BedWars.getInstance().getShopHandler().getMainInventory());
             player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
             event.setCancelled(true);

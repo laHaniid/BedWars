@@ -17,12 +17,7 @@ public class StatsHandler {
         Bukkit.getScheduler().scheduleAsyncDelayedTask(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
-                new StatsAPI(player).createPlayer("bedwars", "kills");
-                new StatsAPI(player).createPlayer("bedwars", "deaths");
-                new StatsAPI(player).createPlayer("bedwars", "wins");
-                new StatsAPI(player).createPlayer("bedwars", "played");
-                new StatsAPI(player).createPlayer("bedwars", "bed");
-                new StatsAPI(player).createPlayer("bedwars", "points");
+                new StatsAPI(player).createPlayer();
             }
         });
     }
@@ -31,7 +26,7 @@ public class StatsHandler {
         Bukkit.getScheduler().scheduleAsyncDelayedTask(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
-                new StatsAPI(player).addInt("bedwars", "kills", 1);
+                new StatsAPI(player).addInt("KILLS", 1);
                 addPoints(player, 1);
             }
         });
@@ -41,7 +36,7 @@ public class StatsHandler {
         Bukkit.getScheduler().scheduleAsyncDelayedTask(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
-                new StatsAPI(player).addInt("bedwars", "deaths", 1);
+                new StatsAPI(player).addInt("DEATHS", 1);
             }
         });
     }
@@ -50,7 +45,7 @@ public class StatsHandler {
         Bukkit.getScheduler().scheduleAsyncDelayedTask(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
-                new StatsAPI(player).addInt("bedwars", "played", 1);
+                new StatsAPI(player).addInt("PLAYED", 1);
                 addPoints(player, 5);
             }
         });
@@ -61,7 +56,7 @@ public class StatsHandler {
         Bukkit.getScheduler().scheduleAsyncDelayedTask(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
-                new StatsAPI(player).addInt("bedwars", "wins", 1);
+                new StatsAPI(player).addInt("WINS", 1);
                 addPoints(player, 20);
             }
         });
@@ -71,7 +66,7 @@ public class StatsHandler {
         Bukkit.getScheduler().scheduleAsyncDelayedTask(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
-                new StatsAPI(player).addInt("bedwars", "bed", 1);
+                new StatsAPI(player).addInt("BED", 1);
                 addPoints(player, 10);
             }
         });
@@ -81,7 +76,7 @@ public class StatsHandler {
         Bukkit.getScheduler().scheduleAsyncDelayedTask(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
-                new StatsAPI(player).addInt("bedwars", "points", amount);
+                new StatsAPI(player).addInt("POINTS", amount);
             }
         });
     }

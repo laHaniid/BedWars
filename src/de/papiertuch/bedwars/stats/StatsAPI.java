@@ -1,6 +1,8 @@
 package de.papiertuch.bedwars.stats;
 
 import de.papiertuch.bedwars.BedWars;
+import de.papiertuch.nickaddon.NickAddon;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.SkullType;
 import org.bukkit.block.BlockState;
@@ -12,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,17 +39,12 @@ public class StatsAPI {
 
     }
 
-    public void createTable(String table) {
-        BedWars.getInstance().getMySQL().update("CREATE TABLE IF NOT EXISTS " + table.toLowerCase() + " (UUID VARCHAR(100), NAME VARCHAR(100), TYPE TEXT, VALUE INT)");
 
-    }
-
-    public Integer getRankingFromUUID(String table, String type) {
+    public Integer getRankingFromUUID() {
         boolean done = false;
         int rank = 0;
         try {
-            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT UUID FROM " + table.toLowerCase() + " WHERE TYPE = ? ORDER BY VALUE DESC");
-            preparedStatement.setString(1, type.toUpperCase());
+            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT UUID FROM bedwars ORDER BY POINTS DESC");
             ResultSet rs = preparedStatement.executeQuery();
             while ((rs.next()) && (!done)) {
                 rank++;
@@ -62,69 +60,81 @@ public class StatsAPI {
         return rank;
     }
 
-    public void createPlayer(String table, String type) {
-        if (!isExistPlayer(table, type)) {
+    public void createPlayer() {
+        if (!isExistPlayer()) {
             try {
-                PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("INSERT INTO " + table.toLowerCase() + " (UUID, NAME, TYPE, VALUE) VALUES (?, ?, ?, ?)");
+                PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("INSERT INTO bedwars (UUID, NAME, KILLS, DEATHS, WINS, PLAYED, BED, POINTS) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                 preparedStatement.setString(1, uuid.toString());
                 preparedStatement.setString(2, name);
-                preparedStatement.setString(3, type);
+                preparedStatement.setInt(3, 0);
                 preparedStatement.setInt(4, 0);
+                preparedStatement.setInt(5, 0);
+                preparedStatement.setInt(6, 0);
+                preparedStatement.setInt(7, 0);
+                preparedStatement.setInt(8, 0);
                 preparedStatement.executeUpdate();
                 preparedStatement.close();
-                new StatsAPI(player).updateName(table, name);
+                updateName();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    public void addInt(String table, String type, int value) {
-        if (isExistPlayer(table, type)) {
-            setInt(table, type, getInt(table, type) + value);
+    public void addInt(String type, int value) {
+        setInt(type, getInt(type) + value);
+    }
+
+    public void updateName() {
+        if (Bukkit.getPluginManager().getPlugin("NickAddon") != null) {
+            BedWars.getInstance().getMySQL().update("UPDATE bedwars SET NAME= '" + NickAddon.getInstance().getMySQL().getRealName(uuid) + "' WHERE UUID= '" + uuid.toString() + "';");
         } else {
-            createPlayer(table, type);
+            BedWars.getInstance().getMySQL().update("UPDATE bedwars SET NAME= '" + name + "' WHERE UUID= '" + uuid.toString() + "';");
         }
     }
 
-    public void updateName(String table, String name) {
-        BedWars.getInstance().getMySQL().update("UPDATE " + table.toLowerCase() + " SET NAME= '" + name + "' WHERE UUID= '" + uuid + "';");
+    public void removeInt(String type, int value) {
+        setInt(type, getInt(type) - value);
     }
 
-    public void removeInt(String table, String type, int value) {
-        if (isExistPlayer(table, type)) {
-            setInt(table, type, getInt(table, type) - value);
-        } else {
-            createPlayer(table, type);
-        }
-    }
-
-    public void setInt(String table, String type, int value) {
-        if (isExistPlayer(table, type)) {
+    public void setInt(String type, int value) {
             try {
-                PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("UPDATE " + table.toLowerCase() + " SET VALUE = ? WHERE UUID = ? AND TYPE = ?");
+                PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("UPDATE bedwars SET " + type + " = ? WHERE UUID = ?");
                 preparedStatement.setInt(1, value);
                 preparedStatement.setString(2, uuid.toString());
-                preparedStatement.setString(3, type.toUpperCase());
                 preparedStatement.executeUpdate();
                 preparedStatement.close();
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
-        }
     }
 
-    public Integer getInt(String table, String type) {
+    public Integer getInt(String type) {
         try {
-            PreparedStatement var6 = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT VALUE FROM " + table.toLowerCase() + " WHERE UUID = ? AND TYPE = ?");
-            var6.setString(1, uuid.toString());
-            var6.setString(2, type.toUpperCase());
-            ResultSet rs = var6.executeQuery();
+            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM bedwars WHERE UUID = ?");
+            preparedStatement.setString(1, uuid.toString());
+            ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                return rs.getInt("VALUE");
+                return rs.getInt(type);
             }
             rs.close();
-            var6.close();
+            preparedStatement.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return 0;
+    }
+
+    public Integer getInt(String name, String type) {
+        try {
+            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM bedwars WHERE NAME = ?");
+            preparedStatement.setString(1, name);
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(type);
+            }
+            rs.close();
+            preparedStatement.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -132,14 +142,13 @@ public class StatsAPI {
     }
 
 
-    private boolean isExistPlayer(String table, String type) {
+    private boolean isExistPlayer() {
         try {
-            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM " + table.toLowerCase() + " WHERE UUID = ? AND TYPE = ?");
+            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM bedwars WHERE UUID = ?");
             preparedStatement.setString(1, uuid.toString());
-            preparedStatement.setString(2, type.toUpperCase());
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
-                if (rs.getString("TYPE") != null) {
+                if (rs.getString("UUID") != null) {
                     return true;
                 }
                 return false;
@@ -153,51 +162,32 @@ public class StatsAPI {
     }
 
 
-    private String getNameRankByID(String table, String type, int place) {
+    private List<String> getRanking() {
+        List<String> top10 = new ArrayList<>();
         try {
             int rank = 0;
-            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM " + table.toLowerCase() + " WHERE TYPE = ? ORDER BY VALUE DESC");
-            preparedStatement.setString(1, type.toUpperCase());
+            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM bedwars ORDER BY POINTS DESC");
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 rank++;
-                if (rank == place) {
-                    return rs.getString("NAME");
+                if (rank == 10) {
+                    break;
                 }
+                top10.add(rs.getString("NAME"));
             }
             rs.close();
             preparedStatement.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return null;
+        return top10;
     }
 
-    private String getUUIDRankByID(String table, String type, int place) {
-        try {
-            int rank = 0;
-            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM " + table.toLowerCase() + " WHERE TYPE = ? ORDER BY VALUE DESC");
-            preparedStatement.setString(1, type.toUpperCase());
-            ResultSet rs = preparedStatement.executeQuery();
-            while (rs.next()) {
-                rank++;
-                if (rank == place) {
-                    return rs.getString("UUID");
-                }
-            }
-            rs.close();
-            preparedStatement.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-
-    public void setStatsWall(String table, ArrayList<Location> list) {
+    public void setStatsWall(ArrayList<Location> list) {
         try {
             for (int i = 0; i < list.size(); i++) {
                 int id = i + 1;
-                String name = getNameRankByID(table, "points", id);
+                String name = getRanking().get(i);
                 Skull skull = (Skull) list.get(i).getBlock().getState();
                 skull.setSkullType(SkullType.PLAYER);
                 skull.setOwner(name);
@@ -208,29 +198,12 @@ public class StatsAPI {
                     Sign sign = (Sign) blockState;
                     sign.setLine(0, "Platz §8#" + id);
                     sign.setLine(1, "§8" + name);
-                    sign.setLine(2, "§l" + getInteger(UUID.fromString(getUUIDRankByID(table, "points", id)), table, "points") + " §rPunkte");
-                    sign.setLine(3, "§l" + getInteger(UUID.fromString(getUUIDRankByID(table, "wins", id)), table, "wins") + " §rWins");
+                    sign.setLine(2, "§l" + getInt(name, "POINTS") + " §rPunkte");
+                    sign.setLine(3, "§l" + getInt(name, "WINS") + " §rWins");
                     sign.update();
                 }
             }
         } catch (Exception ex) {
         }
-    }
-
-    private Integer getInteger(UUID id, String table, String type) {
-        try {
-            PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT VALUE FROM " + table.toLowerCase() + " WHERE UUID = ? AND TYPE = ?");
-            preparedStatement.setString(1, id.toString());
-            preparedStatement.setString(2, type.toUpperCase());
-            ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("VALUE");
-            }
-            rs.close();
-            preparedStatement.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-        return 0;
     }
 }

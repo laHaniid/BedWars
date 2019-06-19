@@ -1,0 +1,9 @@
+name: NickAddon
+author: Papiertuch
+version: 1.0
+main: de.papiertuch.nickaddon.NickAddon
+softdepend:
+  - NickAPI
+  - BedWars
+commands:
+  nick:

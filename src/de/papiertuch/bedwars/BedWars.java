@@ -1,5 +1,7 @@
 package de.papiertuch.bedwars;
 
+import de.dytanic.cloudnet.bridge.CloudServer;
+import de.dytanic.cloudnet.lib.server.ServerState;
 import de.papiertuch.bedwars.commands.Setup;
 import de.papiertuch.bedwars.commands.Start;
 import de.papiertuch.bedwars.commands.Stats;
@@ -36,56 +38,63 @@ public class BedWars extends JavaPlugin {
     private Scheduler scheduler;
     private GameHandler gameHandler;
     private GameState gameState;
-    private ArrayList<TabListGroup> tabListGroups;
     private Board board;
     private LocationAPI locationAPI;
+    private BedWarsConfig bedWarsConfig;
+    private StatsHandler statsHandler;
+    private MySQL mySQL;
+    private ShopHandler shopHandler;
+
+    private ArrayList<TabListGroup> tabListGroups;
     private ArrayList<BedWarsTeam> bedWarsTeams;
     private ArrayList<BedWarsTeam> aliveTeams;
-    private HashMap<UUID, String> setupBed;
-    private HashMap<UUID, String> setupBedTop;
     private ArrayList<UUID> spectators;
-    private BedWarsConfig bedWarsConfig;
-    private ArrayList<Location> blocks;
-    private StatsHandler statsHandler;
-    private HashMap<String, Color> colors;
-    private HashMap<Color, Integer> colorIds;
-    private HashMap<UUID, Integer> setupStatsWall;
     private ArrayList<UUID> players;
-    private HashMap<Player, Player> lastHit;
     private ArrayList<Player> death;
     private ArrayList<Location> statsWall;
-    private ShopHandler shopHandler;
+    private ArrayList<Location> blocks;
+
+    private HashMap<UUID, String> setupBed;
+    private HashMap<UUID, String> setupBedTop;
+    private HashMap<UUID, Integer> setupStatsWall;
+    private HashMap<String, Color> colors;
+    private HashMap<Color, Integer> colorIds;
+    private HashMap<Player, Player> lastHit;
     private HashMap<BedWarsTeam, Inventory> teamChest;
+
     private boolean boarder;
-    private MySQL mySQL;
+
 
     @Override
     public void onEnable() {
         instance = this;
-        players = new ArrayList<>();
-        death = new ArrayList<>();
+        statsHandler = new StatsHandler();
         mySQL = new MySQL();
         shopHandler = new ShopHandler();
-        setupStatsWall = new HashMap<>();
-        blocks = new ArrayList<>();
-        statsHandler = new StatsHandler();
-        scheduler = new Scheduler();
-        teamChest = new HashMap<>();
         gameHandler = new GameHandler();
+        bedWarsConfig = new BedWarsConfig();
+        locationAPI = new LocationAPI();
+        scheduler = new Scheduler();
+        board = new Board();
+
+        players = new ArrayList<>();
+        death = new ArrayList<>();
         aliveTeams = new ArrayList<>();
         tabListGroups = new ArrayList<>();
+        blocks = new ArrayList<>();
+        statsWall = new ArrayList<>();
+        bedWarsTeams = new ArrayList<>();
+        spectators = new ArrayList<>();
+
+        setupStatsWall = new HashMap<>();
+        teamChest = new HashMap<>();
         lastHit = new HashMap<>();
         colorIds = new HashMap<>();
-        statsWall = new ArrayList<>();
         colors = new HashMap<>();
-        spectators = new ArrayList<>();
         setupBedTop = new HashMap<>();
         setupBed = new HashMap<>();
-        board = new Board();
-        locationAPI = new LocationAPI();
-        bedWarsTeams = new ArrayList<>();
+
         boarder = false;
-        bedWarsConfig = new BedWarsConfig();
         bedWarsConfig.loadConfig();
         getGameHandler().loadMap();
         setGameState(GameState.LOBBY);
@@ -94,8 +103,8 @@ public class BedWars extends JavaPlugin {
         checkLocations();
         mySQL.connect();
         if (mySQL.isConnected()) {
-            new StatsAPI().createTable("bedwars");
-            new StatsAPI().setStatsWall("bedwars", statsWall);
+            mySQL.createTable();
+            new StatsAPI().setStatsWall(statsWall);
         }
     }
 
@@ -105,7 +114,7 @@ public class BedWars extends JavaPlugin {
             getMySQL().disconnect();
         }
         for (Player a : Bukkit.getOnlinePlayers()) {
-            a.kickPlayer("§cRestart");
+            a.kickPlayer(getBedWarsConfig().getString("prefix") + " §cDer Server startet jetzt neu...");
         }
     }
 
@@ -194,7 +203,6 @@ public class BedWars extends JavaPlugin {
         for (TabListGroup tabListGroup : getTabListGroups()) {
             getServer().getConsoleSender().sendMessage(tabListGroup.getDisplay() + tabListGroup.getName());
         }
-        //TODO CloudNet Server Signs
 
     }
 
@@ -311,7 +319,31 @@ public class BedWars extends JavaPlugin {
     }
 
     public void setGameState(GameState gameState) {
-        MinecraftServer.getServer().setMotd(getBedWarsConfig().getString("motd." + gameState.toString().toLowerCase()));
+        if (getBedWarsConfig().getBoolean("cloudnet")) {
+            if (gameState == GameState.LOBBY) {
+                CloudServer cloudServer = CloudServer.getInstance();
+                cloudServer.setMaxPlayers(getGameHandler().getMaxPlayers());
+                cloudServer.setMotd(bedWarsConfig.getString("mapName"));
+                cloudServer.setServerState(ServerState.LOBBY);
+                cloudServer.update();
+            }
+            if (gameState == GameState.INGAME) {
+                CloudServer cloudServer = CloudServer.getInstance();
+                cloudServer.setMaxPlayers(getGameHandler().getMaxPlayers() + 10);
+                cloudServer.setMotd(bedWarsConfig.getString("mapName"));
+                cloudServer.setServerState(ServerState.INGAME);
+                cloudServer.update();
+            }
+            if (gameState == GameState.ENDING) {
+                CloudServer cloudServer = CloudServer.getInstance();
+                cloudServer.setMaxPlayers(getGameHandler().getMaxPlayers());
+                cloudServer.setMotd(bedWarsConfig.getString("mapName"));
+                cloudServer.setServerState(ServerState.OFFLINE);
+                cloudServer.update();
+            }
+        } else {
+            MinecraftServer.getServer().setMotd(getBedWarsConfig().getString("motd." + gameState.toString().toLowerCase()));
+        }
         this.gameState = gameState;
     }
 
