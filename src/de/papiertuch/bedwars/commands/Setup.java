@@ -56,7 +56,7 @@ public class Setup implements CommandExecutor {
                 player.sendMessage("§8» §f§lMapBackup §8» " + (new File(BedWars.getInstance().getBedWarsConfig().getString("mapName")).exists() ? "§a✔" : "§c✖"));
                 player.sendMessage("§8» §f§lLobbySpawn §8» " + (BedWars.getInstance().getLocationAPI().isExists("lobby") ? "§a✔" : "§c✖"));
                 player.sendMessage("§8» §f§lSpectatorSpawn §8» " + (BedWars.getInstance().getLocationAPI().isExists("spectator") ? "§a✔" : "§c✖"));
-                player.sendMessage("§8» §f§lStatsWand §8» " + (BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall") == 10 ? "§a✔" : "§c✖"));
+                player.sendMessage("§8» §f§lStatsWand §8» " + (BedWars.getInstance().getLocationAPI().getCfg().get("statsWall") != null ? "§a✔" : "§c✖"));
                 for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
                     player.sendMessage("§8» §f§lSpawn von " + team.getColor() + team.getName() + " §8» " + (BedWars.getInstance().getLocationAPI().isExists("spawn." + team.getName().toLowerCase()) ? "§a✔" : "§c✖"));
                     player.sendMessage("§8» §f§lBed von " + team.getColor() + team.getName() + " §8» " + (BedWars.getInstance().getLocationAPI().isExists("bed." + team.getName().toLowerCase()) ? "§a✔" : "§c✖"));
@@ -115,10 +115,6 @@ public class Setup implements CommandExecutor {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-                }
-                if (statsWall == 10) {
-                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu kannst maximal nur 10 Kopfe setzen!");
-                    return true;
                 }
                 int newStatsWall = statsWall + 1;
                 BedWars.getInstance().getLocationAPI().getCfg().set("statsWall", newStatsWall);

@@ -66,6 +66,7 @@ public class BedWars extends JavaPlugin {
 
     private boolean boarder;
     private boolean gold;
+    private boolean nickEnable;
 
 
     @Override
@@ -101,6 +102,8 @@ public class BedWars extends JavaPlugin {
 
         boarder = false;
         gold = true;
+        nickEnable = false;
+
         bedWarsConfig.loadConfig();
         getGameHandler().loadMap();
         setGameState(GameState.LOBBY);
@@ -111,6 +114,10 @@ public class BedWars extends JavaPlugin {
         if (mySQL.isConnected()) {
             mySQL.createTable();
             new StatsAPI().setStatsWall(statsWall);
+        }
+
+        if (getServer().getPluginManager().getPlugin("NickAddon") != null) {
+            nickEnable = true;
         }
     }
 
@@ -134,18 +141,16 @@ public class BedWars extends JavaPlugin {
         getServer().getConsoleSender().sendMessage("§8- §7MapBackup§8: " + (new File(BedWars.getInstance().getBedWarsConfig().getString("mapName")).exists() ? "§aGesetzt" : "§cFehlt"));
         getServer().getConsoleSender().sendMessage("§8- §7LobbySpawn§8: " + (getLocationAPI().isExists("lobby") ? "§aGesetzt" : "§cFehlt"));
         getServer().getConsoleSender().sendMessage("§8- §7SpectatorSpawn§8: " + (getLocationAPI().isExists("spectator") ? "§aGesetzt" : "§cFehlt"));
-        getServer().getConsoleSender().sendMessage("§8- §7StatsWand§8: " + (BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall") == 10 ? "§aGesetzt" : "§cFehlt"));
+        getServer().getConsoleSender().sendMessage("§8- §7StatsWand§8: " + (BedWars.getInstance().getLocationAPI().getCfg().get("statsWall") != null ? "§aGesetzt" : "§cFehlt"));
         for (BedWarsTeam team : getBedWarsTeams()) {
             getServer().getConsoleSender().sendMessage("§8- §7Spawn von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI().isExists("spawn." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
             getServer().getConsoleSender().sendMessage("§8- §7Bed von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI().isExists("bed." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
             getServer().getConsoleSender().sendMessage("§8- §7BedTop von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI().isExists("bedtop." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
         }
 
-        if (BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall") == 10) {
-            for (int i = 1; i < 11; i++) {
+        for (int i = 1; i < BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall") + 1; i++) {
                 statsWall.add(getLocationAPI().getLocation("statsSkull." + i));
             }
-        }
     }
 
     private void loadGame() {
@@ -234,6 +239,10 @@ public class BedWars extends JavaPlugin {
         getCommand("start").setExecutor(new Start());
         getCommand("setup").setExecutor(new Setup());
         getCommand("stats").setExecutor(new Stats());
+    }
+
+    public boolean isNickEnable() {
+        return nickEnable;
     }
 
     public void setGold(boolean gold) {

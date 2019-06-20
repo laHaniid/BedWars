@@ -170,7 +170,7 @@ public class StatsAPI {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 rank++;
-                if (rank == 10) {
+                if (rank == BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall")) {
                     break;
                 }
                 top10.add(rs.getString("NAME"));

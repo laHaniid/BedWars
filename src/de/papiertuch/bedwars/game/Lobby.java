@@ -48,6 +48,10 @@ public class Lobby {
                     case 45:
                     case 30:
                     case 10:
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
+                                .replace("%seconds%", String.valueOf(seconds)));
+                        playSound();
+                        break;
                     case 15:
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
                                 .replace("%seconds%", String.valueOf(seconds)));

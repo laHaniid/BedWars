@@ -24,7 +24,7 @@ public class PlayerJoinListener implements Listener {
         Player player = event.getPlayer();
         if (BedWars.getInstance().getGameState() == GameState.LOBBY) {
             BedWars.getInstance().getStatsHandler().createPlayer(player);
-            if (Bukkit.getPluginManager().getPlugin("NickAddon") != null) {
+            if (BedWars.getInstance().isNickEnable()) {
                 if (new NickAPI(player).getAutoNickState()) {
                     new NickAPI(player).setNick(true);
                 }

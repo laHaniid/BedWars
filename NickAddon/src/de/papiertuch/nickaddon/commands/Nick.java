@@ -9,6 +9,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 /**
  * Created by Leon on 17.06.2019.
  * development with love.
@@ -40,6 +42,17 @@ public class Nick implements CommandExecutor {
                             nickAPI.setRandomNick(true);
                             BedWars.getInstance().getBoard().addPlayerToBoard(player);
                         }
+                    } else if (args[0].equalsIgnoreCase("list")) {
+                        if (NickAddon.getInstance().getNickPlayers().size() != 0) {
+                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §7Hier sind alle genickten Spieler");
+                            for (int i = 0; i < NickAddon.getInstance().getNickPlayers().size(); i++) {
+                                UUID uuid = NickAddon.getInstance().getNickPlayers().get(i);
+                                Player target = Bukkit.getPlayer(uuid);
+                                player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + target.getDisplayName() + " §8» §7" + NickAddon.getInstance().getMySQL().getRealName(uuid));
+                            }
+                        } else {
+                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §cEs sind keine Spieler genickt!");
+                        }
                     }
                 } else {
                     player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §cDu kannst dich nicht als Spectator nicken!");
@@ -53,6 +66,17 @@ public class Nick implements CommandExecutor {
                     } else {
                         nickAPI.setRandomNick(true);
                         NickAddon.getInstance().updateNameTags(player);
+                    }
+                } else if (args[0].equalsIgnoreCase("list")) {
+                    if (NickAddon.getInstance().getNickPlayers().size() != 0) {
+                        player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §7Hier sind alle genickten Spieler");
+                        for (int i = 0; i < NickAddon.getInstance().getNickPlayers().size(); i++) {
+                            UUID uuid = NickAddon.getInstance().getNickPlayers().get(i);
+                            Player target = Bukkit.getPlayer(uuid);
+                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + target.getDisplayName() + " §8» §7" + NickAddon.getInstance().getMySQL().getRealName(uuid));
+                        }
+                    } else {
+                        player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §cEs sind keine Spieler genickt!");
                     }
                 }
             }

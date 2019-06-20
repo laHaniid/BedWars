@@ -3,7 +3,6 @@ package de.papiertuch.bedwars.utils;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
 import de.papiertuch.nickaddon.NickAddon;
-import net.haoshoku.nick.NickPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -166,10 +165,13 @@ public class Board {
         for (Player all : player.getServer().getOnlinePlayers()) {
             initScoreboard(all);
             if (playerPermissionGroup != null)
-                if (NickAddon.getInstance().getNickPlayers().contains(player.getUniqueId())) {
-                    addTeamEntry(player, all, BedWars.getInstance().getTabListGroups().get(BedWars.getInstance().getTabListGroups().size() - 1));
+                if (BedWars.getInstance().isNickEnable()) {
+                    if (NickAddon.getInstance().getNickPlayers().contains(player.getUniqueId())) {
+                        addTeamEntry(player, all, BedWars.getInstance().getTabListGroups().get(BedWars.getInstance().getTabListGroups().size() - 1));
+                    } else {
+                        addTeamEntry(player, all, playerPermissionGroup);
+                    }
                 } else {
-
                     addTeamEntry(player, all, playerPermissionGroup);
                 }
 
@@ -182,20 +184,31 @@ public class Board {
 
     private void addTeamEntry(Player target, Player all, TabListGroup permissionGroup) {
         Team team;
-        if (NickAddon.getInstance().getNickPlayers().contains(target.getUniqueId())) {
-            TabListGroup tabListGroup = BedWars.getInstance().getTabListGroups().get(BedWars.getInstance().getTabListGroups().size() - 1);
-            team = all.getScoreboard().getTeam(tabListGroup.getTagId() + tabListGroup.getName());
+        if (BedWars.getInstance().isNickEnable()) {
+            if (NickAddon.getInstance().getNickPlayers().contains(target.getUniqueId())) {
+                TabListGroup tabListGroup = BedWars.getInstance().getTabListGroups().get(BedWars.getInstance().getTabListGroups().size() - 1);
+                team = all.getScoreboard().getTeam(tabListGroup.getTagId() + tabListGroup.getName());
+            } else {
+                team = all.getScoreboard().getTeam(permissionGroup.getTagId() + permissionGroup.getName());
+            }
         } else {
             team = all.getScoreboard().getTeam(permissionGroup.getTagId() + permissionGroup.getName());
         }
         if (team == null)
             team = all.getScoreboard().registerNewTeam(permissionGroup.getTagId() + permissionGroup.getName());
-        if (NickAddon.getInstance().getNickPlayers().contains(target.getUniqueId())) {
-            TabListGroup tabListGroup = BedWars.getInstance().getTabListGroups().get(BedWars.getInstance().getTabListGroups().size() - 1);
-            team.setPrefix(ChatColor.translateAlternateColorCodes('&', tabListGroup.getPrefix()));
-            team.setSuffix(ChatColor.translateAlternateColorCodes('&', tabListGroup.getSuffix()));
-            team.addEntry(target.getName());
-            target.setDisplayName(ChatColor.translateAlternateColorCodes('&', tabListGroup.getDisplay()) + target.getName());
+        if (BedWars.getInstance().isNickEnable()) {
+            if (NickAddon.getInstance().getNickPlayers().contains(target.getUniqueId())) {
+                TabListGroup tabListGroup = BedWars.getInstance().getTabListGroups().get(BedWars.getInstance().getTabListGroups().size() - 1);
+                team.setPrefix(ChatColor.translateAlternateColorCodes('&', tabListGroup.getPrefix()));
+                team.setSuffix(ChatColor.translateAlternateColorCodes('&', tabListGroup.getSuffix()));
+                team.addEntry(target.getName());
+                target.setDisplayName(ChatColor.translateAlternateColorCodes('&', tabListGroup.getDisplay()) + target.getName());
+            } else {
+                team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
+                team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
+                team.addEntry(target.getName());
+                target.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay()) + target.getName());
+            }
         } else {
             team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
             team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
