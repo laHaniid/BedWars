@@ -4,6 +4,7 @@ import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
 import de.papiertuch.bedwars.utils.BedWarsTeam;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.WorldBorder;
 import org.bukkit.entity.Player;
@@ -34,7 +35,8 @@ public class Boarder {
                 for (Player a : Bukkit.getOnlinePlayers()) {
                     if (BedWars.getInstance().getPlayers().contains(a.getUniqueId())) {
                         BedWarsTeam team = BedWars.getInstance().getGameHandler().getTeam(a);
-                        BedWars.getInstance().getGameHandler().sendActionBar(a, team.getColor() + "§l" + team.getName());
+                        String state = BedWars.getInstance().isGold() ? "§2✔" : "§4✖";
+                        BedWars.getInstance().getGameHandler().sendActionBar(a, "§f§lGold §8» " + state + " §8┃ §f§lTeam §8» " + team.getColor() + "§l" + team.getName());
                     }
                     for (UUID uuid : BedWars.getInstance().getSpectators()) {
                         Player spec = Bukkit.getPlayer(uuid);

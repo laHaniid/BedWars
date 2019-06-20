@@ -30,9 +30,6 @@ public class PlayerJoinListener implements Listener {
                 }
             }
             BedWars.getInstance().getGameHandler().setPlayer(player);
-            if (player.hasPermission(BedWars.getInstance().getBedWarsConfig().getString("commands.start.permission"))) {
-                player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.start.slot"), new ItemStorage().getStartItem());
-            }
             BedWars.getInstance().getBoard().addPlayerToBoard(player);
             event.setJoinMessage(BedWars.getInstance().getBedWarsConfig().getString("message.joinGame")
                     .replace("%player%", player.getDisplayName())

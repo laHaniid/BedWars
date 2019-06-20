@@ -32,7 +32,7 @@ public class BedWarsConfig {
         configuration.addDefault("mode", "4x2");
         configuration.addDefault("minPlayers", 2);
         configuration.addDefault("mapName", "Map");
-        configuration.addDefault("bronzeSpawnRate", 1);
+        configuration.addDefault("bronzeSpawnRate", 0);
         configuration.addDefault("ironSpawnRate", 10);
         configuration.addDefault("goldSpawnRate", 35);
         configuration.addDefault("shopType", "ARMOR_STAND");
@@ -86,9 +86,10 @@ public class BedWarsConfig {
         configuration.addDefault("message.gameStarting", "%prefix% &aDas Spiel wird gestartet...");
         configuration.addDefault("message.gameStartingIn", "%prefix% &7Das &a&lSpiel &7startet in &a&l%seconds% &7Sekunden");
         configuration.addDefault("message.gameStartingInOneSecond", "%prefix% &7Das &a&lSpiel &7startet in &a&leiner &7Sekunde");
-        configuration.addDefault("message.builder", "%prefix% &7Erbaut von&8: &e&l%builder%");
+        configuration.addDefault("message.builder", "%prefix% &7Erbaut von &8\u00BB &e&l%builder%");
+        configuration.addDefault("message.goldStatus", "%prefix% &7Gold Status &8\u00BB &e&l%state%");
         configuration.addDefault("message.yourInTeam", "%prefix% &7Du bist nun im Team %team%");
-        configuration.addDefault("message.waiting", "%prefix% &7Warte auf &c&l%players% &S7pieler...");
+        configuration.addDefault("message.waiting", "%prefix% &7Warte auf &c&l%players% &7Spieler...");
         configuration.addDefault("message.teamWin", " %prefix% &7Das Team %team% &7hat gewonnen!");
         configuration.addDefault("message.boarderIn", "%prefix% &7Die &cBoarder &7verkleinert sich in &c&l%minutes% &7Minuten");
         configuration.addDefault("message.boarderInOneMinute", "%prefix% &7Die &cBoarder &7verkleinert sich in &c&leiner Minute");
@@ -102,7 +103,7 @@ public class BedWarsConfig {
         configuration.addDefault("message.serverStop", "%prefix% &cDer Server stoppt jetzt!");
         configuration.addDefault("message.startRound", "%prefix% &aDu hast die Runde gestartet");
         configuration.addDefault("message.countDownUnderSeconds", "%prefix% &cDer Countdown ist bereits unter &e&l%seconds% &cSekunden!");
-        configuration.addDefault("message.notEnoughPlayers", "%prefix% &cEs sind ncht genug Spieler online!");
+        configuration.addDefault("message.notEnoughPlayers", "%prefix% &cEs sind nicht genug Spieler online!");
         configuration.addDefault("message.roundAlreadyStarting", "%prefix% &cDie Runde startet bereits...");
         configuration.addDefault("message.noPerms", "%prefix% &cDazu hast du keine Rechte...");
         configuration.addDefault("message.destroyOwnBed", "%prefix% &cDu kannst dein eigenes Bett nicht abbauen!");
@@ -113,7 +114,7 @@ public class BedWarsConfig {
         configuration.addDefault("message.teleportToPlayer", "%prefix% &7Du bist nun bei %player%");
         configuration.addDefault("message.killMessage", "%prefix% %player% &7wurde von %killer% &7get\u00F6tet");
         configuration.addDefault("message.killerLife", "%prefix% &7Leben von %killer% &8\u00BB &e&l%live%");
-        configuration.addDefault("message.death", "%prefix% %player% &cist gestorben");
+        configuration.addDefault("message.death", "%prefix% %player% &7ist gestorben");
         configuration.addDefault("message.teamDeath", "%prefix% &7Das Team %team% &7ist ausgeschieden");
         configuration.addDefault("message.teamReamingPlayers", "%prefix% &7Das Team %team% &7hat noch &e&l%players% Spieler");
         configuration.addDefault("message.joinGame", "%prefix% %player% &7hat das Spiel betreten &8\u00BB &e&l%players%&8/&e&l%maxPlayers%");
@@ -130,9 +131,14 @@ public class BedWarsConfig {
         configuration.addDefault("item.compass.material", "COMPASS");
         configuration.addDefault("item.compass.name", "&aSpieler &8\u00BB &7Rechtsklick");
         configuration.addDefault("item.compass.slot", 4);
-        configuration.addDefault("item.start.material", "PAPER");
+        configuration.addDefault("item.vote.material", "PAPER");
+        configuration.addDefault("item.vote.name", "&aVoting &8\u00BB &7Rechtsklick");
+        configuration.addDefault("item.vote.slot", 3);
+        configuration.addDefault("item.start.material", "REDSTONE_TORCH_ON");
         configuration.addDefault("item.start.name", "&bSpiel starten &8\u00BB &7Rechtsklick");
-        configuration.addDefault("item.start.slot", 4);
+        configuration.addDefault("item.start.slot", 5);
+        configuration.addDefault("item.voting.mapVote", "&8\u00BB &bMapvoting (&cBald&7)");
+        configuration.addDefault("item.voting.goldVote", "&8\u00BB &6GoldVoting");
 
         configuration.addDefault("inventory.shop.title", "&8\u00BB &6Haupt");
 

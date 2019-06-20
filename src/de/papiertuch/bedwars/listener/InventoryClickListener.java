@@ -33,7 +33,34 @@ public class InventoryClickListener implements Listener {
             if (BedWars.getInstance().getSpectators().contains(player.getUniqueId())) {
                 event.setCancelled(true);
             }
-            if (event.getInventory().getName().equals(BedWars.getInstance().getBedWarsConfig().getString("item.compass.name"))) {
+            if (event.getClickedInventory().getName().equals(BedWars.getInstance().getBedWarsConfig().getString("item.vote.name"))) {
+                if (event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(BedWars.getInstance().getBedWarsConfig().getString("item.voting.mapVote"))) {
+                    player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                }
+                if (event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase(BedWars.getInstance().getBedWarsConfig().getString("item.voting.goldVote"))) {
+                    BedWars.getInstance().getGameHandler().getGoldVoteInventory(player, event.getCurrentItem().getItemMeta().getDisplayName());
+                    player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                }
+            }
+            if (event.getClickedInventory().getName().equals(BedWars.getInstance().getBedWarsConfig().getString("item.voting.goldVote"))) {
+                if (event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§8» §aMit Gold")) {
+                    BedWars.getInstance().getNoGold().remove(player.getUniqueId());
+                    BedWars.getInstance().getWithGold().remove(player.getUniqueId());
+                    BedWars.getInstance().getWithGold().add(player.getUniqueId());
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du hast für §aJa §7gestimmt");
+                    player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                    player.closeInventory();
+                }
+                if (event.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("§8» §cohne Gold")) {
+                    BedWars.getInstance().getWithGold().remove(player.getUniqueId());
+                    BedWars.getInstance().getNoGold().remove(player.getUniqueId());
+                    BedWars.getInstance().getNoGold().add(player.getUniqueId());
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du hast für §cNein §7gestimmt");
+                    player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+                    player.closeInventory();
+                }
+            }
+            if (event.getClickedInventory().getName().equals(BedWars.getInstance().getBedWarsConfig().getString("item.compass.name"))) {
                 event.setCancelled(true);
                 String name = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
                 Player target = Bukkit.getPlayer(name);

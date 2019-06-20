@@ -2,10 +2,10 @@ package de.papiertuch.nickaddon.listener;
 
 import de.papiertuch.nickaddon.NickAddon;
 import de.papiertuch.nickaddon.utils.NickAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
@@ -34,6 +34,11 @@ public class PlayerJoinListener implements Listener {
             } else {
                 new NickAPI(player).disableNick();
             }
+        } else if (Bukkit.getPluginManager().getPlugin("BedWars") == null) {
+            if (new NickAPI(player).getAutoNickState()) {
+                new NickAPI(player).setNick(true);
+            }
+            NickAddon.getInstance().updateNameTags(player);
         }
     }
 }

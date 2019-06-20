@@ -24,9 +24,17 @@ public class ItemStorage {
             .setName(BedWars.getInstance().getBedWarsConfig().getString("item.start.name"))
             .build();
 
+    private ItemStack vote = new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("item.vote.material")), 1)
+            .setName(BedWars.getInstance().getBedWarsConfig().getString("item.vote.name"))
+            .build();
+
     private ItemStack compass = new ItemBuilder(Material.valueOf(BedWars.getInstance().getBedWarsConfig().getString("item.compass.material")), 1)
             .setName(BedWars.getInstance().getBedWarsConfig().getString("item.compass.name"))
             .build();
+
+    public ItemStack getVote() {
+        return vote;
+    }
 
     public ItemStack getStartItem() {
         return startItem;

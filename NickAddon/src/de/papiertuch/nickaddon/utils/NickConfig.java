@@ -47,6 +47,25 @@ public class NickConfig {
         configuration.addDefault("message.unNick", "%prefix% &cDein Nickname wurde entfernt");
         configuration.addDefault("message.noPerms", "%prefix% &cDazu hast du keine Rechte...");
 
+        configuration.addDefault("chat.format", "%player% &8\u00BB &7%message%");
+
+        List<String> tabList = new ArrayList<>();
+        tabList.add("Admin");
+        tabList.add("Spieler");
+        configuration.addDefault("tabList", tabList);
+
+        configuration.addDefault("Admin.prefix", "&c&lAdmin &8\u258E &f");
+        configuration.addDefault("Admin.suffix", "&c");
+        configuration.addDefault("Admin.display", "&c");
+        configuration.addDefault("Admin.tagId", 9998);
+        configuration.addDefault("Admin.permission", "bedwars.admin");
+
+        configuration.addDefault("Spieler.prefix", "&f");
+        configuration.addDefault("Spieler.suffix", "&f");
+        configuration.addDefault("Spieler.display", "&f");
+        configuration.addDefault("Spieler.tagId", 9999);
+        configuration.addDefault("Spieler.permission", "bedwars.Spieler");
+
 
 
         List<String> nicks = new ArrayList<>();

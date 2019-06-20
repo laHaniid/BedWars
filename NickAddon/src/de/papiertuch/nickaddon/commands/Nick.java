@@ -3,14 +3,11 @@ package de.papiertuch.nickaddon.commands;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.nickaddon.NickAddon;
 import de.papiertuch.nickaddon.utils.NickAPI;
-import net.haoshoku.nick.NickPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 /**
  * Created by Leon on 17.06.2019.
@@ -32,7 +29,7 @@ public class Nick implements CommandExecutor {
                 } else {
                     nickAPI.setAutoNick(true);
                 }
-            } else {
+            } else if (Bukkit.getPluginManager().getPlugin("BedWars") != null) {
                 if (!BedWars.getInstance().getSpectators().contains(player.getUniqueId())) {
                     NickAPI nickAPI = new NickAPI(player);
                     if (args.length == 0) {
@@ -46,6 +43,17 @@ public class Nick implements CommandExecutor {
                     }
                 } else {
                     player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §cDu kannst dich nicht als Spectator nicken!");
+                }
+            } else {
+                NickAPI nickAPI = new NickAPI(player);
+                if (args.length == 0) {
+                    if (NickAddon.getInstance().getNickPlayers().contains(player.getUniqueId())) {
+                        nickAPI.setRandomNick(false);
+                        NickAddon.getInstance().updateNameTags(player);
+                    } else {
+                        nickAPI.setRandomNick(true);
+                        NickAddon.getInstance().updateNameTags(player);
+                    }
                 }
             }
         } else {

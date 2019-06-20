@@ -39,7 +39,8 @@ public class Game {
                     if (BedWars.getInstance().getPlayers().contains(a.getUniqueId())) {
                         BedWarsTeam team = BedWars.getInstance().getGameHandler().getTeam(a);
                         if (team != null) {
-                            BedWars.getInstance().getGameHandler().sendActionBar(a, team.getColor() + "§l" + team.getName());
+                            String state = BedWars.getInstance().isGold() ? "§2✔" : "§4✖";
+                            BedWars.getInstance().getGameHandler().sendActionBar(a, "§f§lGold §8» " + state + " §8┃ §f§lTeam §8» " + team.getColor() + "§l" + team.getName());
                         }
                     } else {
                         BedWars.getInstance().getGameHandler().sendActionBar(a, "§7§lSpectator");

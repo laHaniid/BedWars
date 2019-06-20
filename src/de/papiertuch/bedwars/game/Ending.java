@@ -26,6 +26,8 @@ public class Ending {
     private float xp = 1.00f;
 
     public void startCountdown() {
+        BedWars.getInstance().getScheduler().getGame().stopCountdown();
+        BedWars.getInstance().getScheduler().getBoarder().stop();
         BedWars.getInstance().setGameState(GameState.ENDING);
         taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(BedWars.getInstance(), new Runnable() {
 

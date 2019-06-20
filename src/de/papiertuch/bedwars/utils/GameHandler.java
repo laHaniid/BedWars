@@ -105,6 +105,40 @@ public class GameHandler {
         }
     }
 
+    public void getGoldVoteInventory(Player player, String name) {
+        Inventory inv = Bukkit.createInventory(null, 9, name);
+        inv.setItem(3, new ItemBuilder(Material.INK_SACK, 1, 10)
+                .setName("§8» §aMit Gold")
+                .setLore("§8» §f" + BedWars.getInstance().getWithGold().size() + " Vote")
+                .build());
+        inv.setItem(5, new ItemBuilder(Material.INK_SACK, 1, 8)
+                .setName("§8» §cohne Gold")
+                .setLore("§8» §f" + BedWars.getInstance().getNoGold().size() + " Vote")
+                .build());
+        player.openInventory(inv);
+    }
+
+    public void getVoteInventory(Player player, String name) {
+        Inventory inv = Bukkit.createInventory(null, 9, name);
+        inv.setItem(3, new ItemBuilder(Material.EMPTY_MAP, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("item.voting.mapVote"))
+                .build());
+        inv.setItem(5, new ItemBuilder(Material.GOLD_INGOT, 1)
+                .setName(BedWars.getInstance().getBedWarsConfig().getString("item.voting.goldVote"))
+                .build());
+        player.openInventory(inv);
+    }
+
+    public void checkGoldVoting() {
+        if (BedWars.getInstance().getWithGold().size() == BedWars.getInstance().getNoGold().size()) {
+            BedWars.getInstance().setGold(true);
+        } else if (BedWars.getInstance().getWithGold().size() >= BedWars.getInstance().getNoGold().size()) {
+            BedWars.getInstance().setGold(true);
+        } else {
+            BedWars.getInstance().setGold(false);
+        }
+    }
+
     public TabListGroup getTabListGroup(Player player) {
         for (TabListGroup tabListGroup : BedWars.getInstance().getTabListGroups()) {
             if (player.hasPermission(tabListGroup.getPermission())) {
@@ -230,7 +264,7 @@ public class GameHandler {
                     Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.CLAY_BRICK, 1).setName("§cBronze").build());
                 }
             }
-        }, 1, BedWars.getInstance().getBedWarsConfig().getInt("bronzeSpawnRate") == 0.5 ? 10 : 20 * BedWars.getInstance().getBedWarsConfig().getInt("bronzeSpawnRate"));
+        }, 1, BedWars.getInstance().getBedWarsConfig().getInt("bronzeSpawnRate") == 0 ? 10 : 20 * BedWars.getInstance().getBedWarsConfig().getInt("bronzeSpawnRate"));
         Bukkit.getScheduler().runTaskTimer(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
@@ -242,18 +276,20 @@ public class GameHandler {
                 }
             }
         }, 1, 20 * BedWars.getInstance().getBedWarsConfig().getInt("ironSpawnRate"));
-        Bukkit.getScheduler().runTaskTimer(BedWars.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                String type = "gold";
-                int spawner = BedWars.getInstance().getLocationAPI().getCfg().getInt(type.toLowerCase() + "spawnercount");
-                for (int i = 1; i <= spawner; i++) {
-                    Location loc = BedWars.getInstance().getLocationAPI().getLocation("spawner." + type.toLowerCase() + "." + i);
-                    Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.GOLD_INGOT, 1).setName("§6Gold").build());
-                }
+        if (BedWars.getInstance().isGold()) {
+            Bukkit.getScheduler().runTaskTimer(BedWars.getInstance(), new Runnable() {
+                @Override
+                public void run() {
+                    String type = "gold";
+                    int spawner = BedWars.getInstance().getLocationAPI().getCfg().getInt(type.toLowerCase() + "spawnercount");
+                    for (int i = 1; i <= spawner; i++) {
+                        Location loc = BedWars.getInstance().getLocationAPI().getLocation("spawner." + type.toLowerCase() + "." + i);
+                        Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.GOLD_INGOT, 1).setName("§6Gold").build());
+                    }
 
-            }
-        }, 1, 20 * BedWars.getInstance().getBedWarsConfig().getInt("goldSpawnRate"));
+                }
+            }, 1, 20 * BedWars.getInstance().getBedWarsConfig().getInt("goldSpawnRate"));
+        }
     }
 
     public void sendToFallback(Player player) {
@@ -278,6 +314,10 @@ public class GameHandler {
         player.getInventory().setArmorContents(null);
         if (BedWars.getInstance().getGameState() == GameState.LOBBY) {
             player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.team.slot"), new ItemStorage().getTeams());
+            player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.vote.slot"), new ItemStorage().getVote());
+        }
+        if (player.hasPermission(BedWars.getInstance().getBedWarsConfig().getString("commands.start.permission"))) {
+            player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.start.slot"), new ItemStorage().getStartItem());
         }
         player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.leave.slot"), new ItemStorage().getLeave());
         for (PotionEffect effect : player.getActivePotionEffects()) {

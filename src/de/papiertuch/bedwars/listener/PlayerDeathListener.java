@@ -75,6 +75,9 @@ public class PlayerDeathListener implements Listener {
         int l = 2;
         double H = h / l;
         double rounded = Math.round(H * 100.0D) / 100.0D;
+        if ((int) rounded == 0) {
+            return (int) 0.5;
+        }
         return (int) rounded;
     }
 }

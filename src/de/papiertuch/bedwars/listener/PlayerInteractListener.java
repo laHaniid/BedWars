@@ -57,6 +57,11 @@ public class PlayerInteractListener implements Listener {
                 BedWars.getInstance().getGameHandler().getTeamInventory(player, player.getItemInHand().getItemMeta().getDisplayName());
                 event.setCancelled(true);
             }
+            if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(new ItemStorage().getVote().getItemMeta().getDisplayName())) {
+                player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
+                BedWars.getInstance().getGameHandler().getVoteInventory(player, player.getItemInHand().getItemMeta().getDisplayName());
+                event.setCancelled(true);
+            }
             if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(new ItemStorage().getLeave().getItemMeta().getDisplayName())) {
                 player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
                 player.kickPlayer("§cLobby");
@@ -121,7 +126,7 @@ public class PlayerInteractListener implements Listener {
                 }
                 noMove.add(player);
                 Location loc = player.getLocation();
-                player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + "§7Du wirst in §a5 §7Sekunden teleportiert!");
+                player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du wirst in §a5 §7Sekunden teleportiert!");
                 for (int i = 0; i < 10; i++) {
                     for (Player all : Bukkit.getOnlinePlayers()) {
                         all.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);

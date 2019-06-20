@@ -50,6 +50,8 @@ public class BedWars extends JavaPlugin {
     private ArrayList<BedWarsTeam> aliveTeams;
     private ArrayList<UUID> spectators;
     private ArrayList<UUID> players;
+    private ArrayList<UUID> withGold;
+    private ArrayList<UUID> noGold;
     private ArrayList<Player> death;
     private ArrayList<Location> statsWall;
     private ArrayList<Location> blocks;
@@ -63,6 +65,7 @@ public class BedWars extends JavaPlugin {
     private HashMap<BedWarsTeam, Inventory> teamChest;
 
     private boolean boarder;
+    private boolean gold;
 
 
     @Override
@@ -85,6 +88,8 @@ public class BedWars extends JavaPlugin {
         statsWall = new ArrayList<>();
         bedWarsTeams = new ArrayList<>();
         spectators = new ArrayList<>();
+        withGold = new ArrayList<>();
+        noGold = new ArrayList<>();
 
         setupStatsWall = new HashMap<>();
         teamChest = new HashMap<>();
@@ -95,6 +100,7 @@ public class BedWars extends JavaPlugin {
         setupBed = new HashMap<>();
 
         boarder = false;
+        gold = true;
         bedWarsConfig.loadConfig();
         getGameHandler().loadMap();
         setGameState(GameState.LOBBY);
@@ -228,6 +234,22 @@ public class BedWars extends JavaPlugin {
         getCommand("start").setExecutor(new Start());
         getCommand("setup").setExecutor(new Setup());
         getCommand("stats").setExecutor(new Stats());
+    }
+
+    public void setGold(boolean gold) {
+        this.gold = gold;
+    }
+
+    public boolean isGold() {
+        return gold;
+    }
+
+    public ArrayList<UUID> getNoGold() {
+        return noGold;
+    }
+
+    public ArrayList<UUID> getWithGold() {
+        return withGold;
     }
 
     public HashMap<Color, Integer> getColorIds() {

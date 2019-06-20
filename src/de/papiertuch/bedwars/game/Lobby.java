@@ -3,6 +3,7 @@ package de.papiertuch.bedwars.game;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
 import de.papiertuch.bedwars.utils.BedWarsTeam;
+import de.papiertuch.bedwars.utils.ItemStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.WorldBorder;
@@ -47,11 +48,6 @@ public class Lobby {
                     case 45:
                     case 30:
                     case 10:
-                    case 5:
-                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
-                                .replace("%seconds%", String.valueOf(seconds)));
-                        playSound();
-                        break;
                     case 15:
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
@@ -60,6 +56,19 @@ public class Lobby {
                         playSound();
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             a.sendTitle(BedWars.getInstance().getBedWarsConfig().getString("prefix"), BedWars.getInstance().getBedWarsConfig().getString("mapName"));
+                        }
+                        break;
+                    case 5:
+                        BedWars.getInstance().getGameHandler().checkGoldVoting();
+                        BedWars.getInstance().getGameHandler().sendBroadCast("");
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.goldStatus")
+                        .replace("%state%", BedWars.getInstance().isGold() ? "§2§l✔" : "§4§l✖"));
+                        BedWars.getInstance().getGameHandler().sendBroadCast("");
+                        BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
+                                .replace("%seconds%", String.valueOf(seconds)));
+                        for (Player a : Bukkit.getOnlinePlayers()) {
+                            a.playSound(a.getLocation(), Sound.ANVIL_LAND, 1, 1);
+                            a.getInventory().remove(new ItemStorage().getVote());
                         }
                         break;
                     case 3:
