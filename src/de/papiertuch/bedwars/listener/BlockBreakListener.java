@@ -49,10 +49,10 @@ public class BlockBreakListener implements Listener {
                 return;
             }
             for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
-                if (event.getBlock().getLocation().equals(BedWars.getInstance().getLocationAPI().getBedLocation("bed." + team.getName().toLowerCase())) || event.getBlock().getLocation().equals(BedWars.getInstance().getLocationAPI().getBedLocation("bedtop." + team.getName().toLowerCase()))) {
+                if (event.getBlock().getLocation().equals(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getBedLocation("bed." + team.getName().toLowerCase())) || event.getBlock().getLocation().equals(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getBedLocation("bedtop." + team.getName().toLowerCase()))) {
                     if (team.getPlayers().contains(player.getUniqueId())) {
                         player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("message.destroyOwnBed"));
-                        player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                        player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.error")), 1, 1);
                         event.setCancelled(true);
                         return;
                     }
@@ -61,18 +61,18 @@ public class BlockBreakListener implements Listener {
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.destroyBed")
                                 .replace("%player%", player.getDisplayName())
                                 .replace("%team%", team.getColor() + team.getName()));
-                        player.playSound(player.getLocation(), Sound.LEVEL_UP, 1F, 1F);
+                        player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.kill")), 1F, 1F);
                         event.setCancelled(true);
-                        BedWars.getInstance().getLocationAPI().getBedLocation("bed." + team.getName().toLowerCase()).getBlock().setType(Material.AIR);
-                        BedWars.getInstance().getLocationAPI().getBedLocation("bedtop." + team.getName().toLowerCase()).getBlock().setType(Material.AIR);
+                        BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getBedLocation("bed." + team.getName().toLowerCase()).getBlock().setType(Material.AIR);
+                        BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getBedLocation("bedtop." + team.getName().toLowerCase()).getBlock().setType(Material.AIR);
                         for (Player a : Bukkit.getOnlinePlayers()) {
-                            a.playSound(a.getLocation(), Sound.WITHER_DEATH, 10F, 10F);
+                            a.playSound(a.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.destroyBed")), 10F, 10F);
                             BedWars.getInstance().getBoard().updateBoard();
                         }
                         for (UUID uuid : team.getPlayers()) {
                             Player a = Bukkit.getPlayer(uuid);
                             a.sendTitle("§cDein Bett", "§cwurde zerstört");
-                            a.playSound(player.getLocation(), Sound.NOTE_PLING, 1F, 1F);
+                            a.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.error")), 1F, 1F);
                         }
                         BedWars.getInstance().getStatsHandler().addDestroyBed(player);
                     }

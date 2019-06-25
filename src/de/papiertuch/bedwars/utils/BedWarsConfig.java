@@ -31,7 +31,6 @@ public class BedWarsConfig {
         configuration.addDefault("builder", "Unbekannt");
         configuration.addDefault("mode", "4x2");
         configuration.addDefault("minPlayers", 2);
-        configuration.addDefault("mapName", "Map");
         configuration.addDefault("bronzeSpawnRate", 0);
         configuration.addDefault("ironSpawnRate", 10);
         configuration.addDefault("goldSpawnRate", 35);
@@ -80,9 +79,20 @@ public class BedWarsConfig {
         configuration.addDefault("Spieler.permission", "bedwars.Spieler");
 
         configuration.addDefault("commands.setup.permission", "bedwars.setup");
+        configuration.addDefault("commands.forceMap.permission", "bedwars.forcemap");
         configuration.addDefault("commands.start.permission", "bedwars.start");
         configuration.addDefault("commands.start.seconds", 5);
 
+        configuration.addDefault("sound.click", "WOOD_CLICK");
+        configuration.addDefault("sound.interact", "PISTON_EXTEND");
+        configuration.addDefault("sound.kill", "LEVEL_UP");
+        configuration.addDefault("sound.countdown", "CLICK");
+        configuration.addDefault("sound.error", "NOTE_PLING");
+        configuration.addDefault("sound.destroyBed", "WITHER_DEATH");
+        configuration.addDefault("sound.endingCountdown", "LAVA_POP");
+
+        configuration.addDefault("message.changeMap", "%prefix% &7Du hast die Map zu &e&l%map% &7ge\u00E4ndert");
+        configuration.addDefault("message.mapNotExists", "%prefix% &cDiese Map gibt es nicht");
         configuration.addDefault("message.gameStarting", "%prefix% &aDas Spiel wird gestartet...");
         configuration.addDefault("message.gameStartingIn", "%prefix% &7Das &a&lSpiel &7startet in &a&l%seconds% &7Sekunden");
         configuration.addDefault("message.gameStartingInOneSecond", "%prefix% &7Das &a&lSpiel &7startet in &a&leiner &7Sekunde");
@@ -137,7 +147,7 @@ public class BedWarsConfig {
         configuration.addDefault("item.start.material", "REDSTONE_TORCH_ON");
         configuration.addDefault("item.start.name", "&bSpiel starten &8\u00BB &7Rechtsklick");
         configuration.addDefault("item.start.slot", 5);
-        configuration.addDefault("item.voting.mapVote", "&8\u00BB &bMapvoting (&cBald&7)");
+        configuration.addDefault("item.voting.mapVote", "&8\u00BB &bMapvoting");
         configuration.addDefault("item.voting.goldVote", "&8\u00BB &6GoldVoting");
 
         configuration.addDefault("inventory.shop.title", "&8\u00BB &6Haupt");

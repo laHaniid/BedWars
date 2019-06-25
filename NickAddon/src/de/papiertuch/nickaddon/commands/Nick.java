@@ -44,18 +44,18 @@ public class Nick implements CommandExecutor {
                         }
                     } else if (args[0].equalsIgnoreCase("list")) {
                         if (NickAddon.getInstance().getNickPlayers().size() != 0) {
-                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §7Hier sind alle genickten Spieler");
+                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("prefix") + " §7Hier sind alle genickten Spieler");
                             for (int i = 0; i < NickAddon.getInstance().getNickPlayers().size(); i++) {
                                 UUID uuid = NickAddon.getInstance().getNickPlayers().get(i);
                                 Player target = Bukkit.getPlayer(uuid);
-                                player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + target.getDisplayName() + " §8» §7" + NickAddon.getInstance().getMySQL().getRealName(uuid));
+                                player.sendMessage(NickAddon.getInstance().getNickConfig().getString("prefix") + " " + target.getDisplayName() + " §8» §7" + NickAddon.getInstance().getMySQL().getRealName(uuid));
                             }
                         } else {
-                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §cEs sind keine Spieler genickt!");
+                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("prefix") + " §cEs sind keine Spieler genickt!");
                         }
                     }
                 } else {
-                    player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §cDu kannst dich nicht als Spectator nicken!");
+                    player.sendMessage(NickAddon.getInstance().getNickConfig().getString("prefix") + " §cDu kannst dich nicht als Spectator nicken!");
                 }
             } else {
                 NickAPI nickAPI = new NickAPI(player);
@@ -69,14 +69,14 @@ public class Nick implements CommandExecutor {
                     }
                 } else if (args[0].equalsIgnoreCase("list")) {
                     if (NickAddon.getInstance().getNickPlayers().size() != 0) {
-                        player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §7Hier sind alle genickten Spieler");
+                        player.sendMessage(NickAddon.getInstance().getNickConfig().getString("prefix") + " §7Hier sind alle genickten Spieler");
                         for (int i = 0; i < NickAddon.getInstance().getNickPlayers().size(); i++) {
                             UUID uuid = NickAddon.getInstance().getNickPlayers().get(i);
                             Player target = Bukkit.getPlayer(uuid);
-                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + target.getDisplayName() + " §8» §7" + NickAddon.getInstance().getMySQL().getRealName(uuid));
+                            player.sendMessage(NickAddon.getInstance().getNickConfig().getString("prefix") + target.getDisplayName() + " §8» §7" + NickAddon.getInstance().getMySQL().getRealName(uuid));
                         }
                     } else {
-                        player.sendMessage(NickAddon.getInstance().getNickConfig().getString("preifx") + " §cEs sind keine Spieler genickt!");
+                        player.sendMessage(NickAddon.getInstance().getNickConfig().getString("prefix") + " §cEs sind keine Spieler genickt!");
                     }
                 }
             }

@@ -2,6 +2,7 @@ package de.papiertuch.bedwars.commands;
 
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.utils.BedWarsTeam;
+import de.papiertuch.bedwars.utils.LocationAPI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,8 +10,6 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * Created by Leon on 15.06.2019.
@@ -32,7 +31,7 @@ public class Setup implements CommandExecutor {
                 } else {
                     for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
                         if (team.getName().equalsIgnoreCase(args[1])) {
-                            BedWars.getInstance().getLocationAPI().setLocation("spawn." + args[1].toLowerCase(), player.getLocation());
+                            BedWars.getInstance().getLocationAPI(player.getWorld().getName()).setLocation("spawn." + args[1].toLowerCase(), player.getLocation());
                             player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Die Location §e§lspawn." + args[1] + " §7wurde gesetzt!");
                         }
                     }
@@ -43,48 +42,46 @@ public class Setup implements CommandExecutor {
                     player.sendMessage("§8» " + team.getColor() + team.getName());
                 }
             } else if (args[0].equalsIgnoreCase("saveMap")) {
-                String path = BedWars.getInstance().getBedWarsConfig().getString("mapName");
+                String path = player.getWorld().getName();
                 String target = "plugins/BedWars/mapBackup/" + path;
                 BedWars.getInstance().getGameHandler().copyFilesInDirectory(new File(path), new File(target));
                 player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Die aktuelle §e§lMap §7wurde als Backup gespeichert");
             } else if (args[0].equalsIgnoreCase("status")) {
-                player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Setup Infos:");
-                if (!BedWars.getInstance().getLocationAPI().getFile().exists()) {
-                    player.sendMessage("§cEs wurden keine Locations gefunden...");
-                    return true;
-                }
-                player.sendMessage("§8» §f§lMapBackup §8» " + (new File(BedWars.getInstance().getBedWarsConfig().getString("mapName")).exists() ? "§a✔" : "§c✖"));
-                player.sendMessage("§8» §f§lLobbySpawn §8» " + (BedWars.getInstance().getLocationAPI().isExists("lobby") ? "§a✔" : "§c✖"));
-                player.sendMessage("§8» §f§lSpectatorSpawn §8» " + (BedWars.getInstance().getLocationAPI().isExists("spectator") ? "§a✔" : "§c✖"));
-                player.sendMessage("§8» §f§lStatsWand §8» " + (BedWars.getInstance().getLocationAPI().getCfg().get("statsWall") != null ? "§a✔" : "§c✖"));
-                for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
-                    player.sendMessage("§8» §f§lSpawn von " + team.getColor() + team.getName() + " §8» " + (BedWars.getInstance().getLocationAPI().isExists("spawn." + team.getName().toLowerCase()) ? "§a✔" : "§c✖"));
-                    player.sendMessage("§8» §f§lBed von " + team.getColor() + team.getName() + " §8» " + (BedWars.getInstance().getLocationAPI().isExists("bed." + team.getName().toLowerCase()) ? "§a✔" : "§c✖"));
-                    player.sendMessage("§8» §f§lBedTop von " + team.getColor() + team.getName() + " §8» " + (BedWars.getInstance().getLocationAPI().isExists("bedtop." + team.getName().toLowerCase()) ? "§a✔" : "§c✖"));
+                if (args.length == 2) {
+                    String map = args[1];
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Setup Infos:");
+                    if (!new LocationAPI(map).getFile().exists()) {
+                        player.sendMessage("§cEs wurden keine Locations gefunden...");
+                        return true;
+                    }
+                    player.sendMessage("§8» §f§lMapBackup §8» " + (new File("plugins/BedWars/mapBackup/" + map).exists() ? "§a✔" : "§c✖"));
+                    player.sendMessage("§8» §f§lLobbySpawn §8» " + (new LocationAPI(map).isExists("lobby") ? "§a✔" : "§c✖"));
+                    player.sendMessage("§8» §f§lSpectatorSpawn §8» " + (new LocationAPI(map).isExists("spectator") ? "§a✔" : "§c✖"));
+                    player.sendMessage("§8» §f§lStatsWand §8» " + (new LocationAPI(map).getCfg().get("statsWall") != null ? "§a✔" : "§c✖"));
+                    for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
+                        player.sendMessage("§8» §f§lSpawn von " + team.getColor() + team.getName() + " §8» " + (new LocationAPI(map).isExists("spawn." + team.getName().toLowerCase()) ? "§a✔" : "§c✖"));
+                        player.sendMessage("§8» §f§lBed von " + team.getColor() + team.getName() + " §8» " + (new LocationAPI(map).isExists("bed." + team.getName().toLowerCase()) ? "§a✔" : "§c✖"));
+                        player.sendMessage("§8» §f§lBedTop von " + team.getColor() + team.getName() + " §8» " + (new LocationAPI(map).isExists("bedtop." + team.getName().toLowerCase()) ? "§a✔" : "§c✖"));
+                    }
+                } else {
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup status <Map>");
                 }
             } else if (args[0].equalsIgnoreCase("setSpawner")) {
                 String type = args[1];
+                LocationAPI locationAPI = new LocationAPI(player.getWorld().getName());
                 if (type.equalsIgnoreCase("Bronze") || type.equalsIgnoreCase("Iron") || type.equalsIgnoreCase("Gold")) {
                     int spawnerCount;
                     try {
-                        spawnerCount = BedWars.getInstance().getLocationAPI().getCfg().getInt(type.toLowerCase() + "spawnercount");
+                        spawnerCount = locationAPI.getCfg().getInt(type.toLowerCase() + "spawnercount");
                     } catch (Exception e) {
-                        BedWars.getInstance().getLocationAPI().getCfg().addDefault(type.toLowerCase() + "spawnercount", 0);
+                        locationAPI.getCfg().addDefault(type.toLowerCase() + "spawnercount", 0);
                         spawnerCount = 0;
-                        try {
-                            BedWars.getInstance().getLocationAPI().getCfg().save(BedWars.getInstance().getLocationAPI().getFile());
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
+                        locationAPI.save();
                     }
                     int newCount = spawnerCount + 1;
-                    BedWars.getInstance().getLocationAPI().getCfg().set(type.toLowerCase() + "spawnercount", newCount);
-                    try {
-                        BedWars.getInstance().getLocationAPI().getCfg().save(BedWars.getInstance().getLocationAPI().getFile());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    BedWars.getInstance().getLocationAPI().setLocation("spawner." + type.toLowerCase() + "." + newCount, player.getLocation());
+                    locationAPI.getCfg().set(type.toLowerCase() + "spawnercount", newCount);
+                    locationAPI.save();
+                    locationAPI.setLocation("spawner." + type.toLowerCase() + "." + newCount, player.getLocation());
                     player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du hast Spawner §e§l" + type.toLowerCase() + " §7mit ID §e§l" + newCount + " §7gesetzt!");
                 } else {
                     player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDieses Material ist nicht vorhanden, Vorlage §8» §cBronze, §fIron, §6Gold");
@@ -101,32 +98,35 @@ public class Setup implements CommandExecutor {
                     }
                 }
             } else if (args[0].equalsIgnoreCase("setLobby")) {
-                BedWars.getInstance().getLocationAPI().setLocation("lobby", player.getLocation());
-                player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Die Location §e§llobby §7wurde gesetzt!");
+                if (args.length == 2) {
+                    new LocationAPI(args[1]).setLocation("lobby", player.getLocation());
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Die Location §e§llobby §7wurde gesetzt!");
+                } else {
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setLobby <Map>");
+                }
             } else if (args[0].equalsIgnoreCase("setStatsWall")) {
-                int statsWall;
-                try {
-                    statsWall = BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall");
-                } catch (Exception e) {
-                    BedWars.getInstance().getLocationAPI().getCfg().addDefault("statsWall", 0);
-                    statsWall = 0;
+                if (args.length == 2) {
+                    String map = args[1];
+                    int statsWall;
+                    LocationAPI locationAPI = new LocationAPI(map);
                     try {
-                        BedWars.getInstance().getLocationAPI().getCfg().save(BedWars.getInstance().getLocationAPI().getFile());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+                        statsWall = locationAPI.getCfg().getInt("statsWall");
+                    } catch (Exception e) {
+                        new LocationAPI(map).getCfg().addDefault("statsWall", 0);
+                        statsWall = 0;
+                        locationAPI.save();
                     }
+                    int newStatsWall = statsWall + 1;
+                    locationAPI.getCfg().set("statsWall", newStatsWall);
+                    locationAPI.save();
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Klicke auf den §e§l" + newStatsWall + " §7Kopf (Rechtsklick)");
+                    BedWars.getInstance().getSetupStatsWall().put(player.getUniqueId(), newStatsWall);
+                    BedWars.getInstance().getSetupStatsWallMap().put(player.getUniqueId(), map);
+                } else {
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setStatsWall <Map>");
                 }
-                int newStatsWall = statsWall + 1;
-                BedWars.getInstance().getLocationAPI().getCfg().set("statsWall", newStatsWall);
-                try {
-                    BedWars.getInstance().getLocationAPI().getCfg().save(BedWars.getInstance().getLocationAPI().getFile());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Klicke auf den §e§l" + newStatsWall + " §7Kopf (Rechtsklick)");
-                BedWars.getInstance().getSetupStatsWall().put(player.getUniqueId(), newStatsWall);
             } else if (args[0].equalsIgnoreCase("setSpectator")) {
-                BedWars.getInstance().getLocationAPI().setLocation("spectator", player.getLocation());
+                BedWars.getInstance().getLocationAPI(player.getWorld().getName()).setLocation("spectator", player.getLocation());
                 player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Die Location §e§lspectator §7wurde gesetzt!");
             }
         } else {
@@ -135,15 +135,15 @@ public class Setup implements CommandExecutor {
         return true;
     }
 
-    private void sendHelp(Player p) {
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup status");
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup saveMap");
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup list");
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpawn <Team>");
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setBed <Team>");
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpawner <§cBronze§7/§fIron§7/§6Gold§7>");
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setStatsWall");
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpectator");
-        p.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setLobby");
+    private void sendHelp(Player player) {
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup status <Map>");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup saveMap");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup list");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpawn <Team>");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setBed <Team>");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpawner <§cBronze§7/§fIron§7/§6Gold§7>");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setStatsWall <Map>");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpectator");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setLobby <Map>");
     }
 }

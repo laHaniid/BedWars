@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 
 /**
@@ -41,7 +42,7 @@ public class GameHandler {
             BedWarsTeam team = BedWars.getInstance().getBedWarsTeams().get(event.getSlot());
             if (team.getPlayers().size() == team.getSize()) {
                 player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("message.teamFull"));
-                player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1);
+                player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.click")), 1, 1);
                 return;
             }
             clearFromTeams(player);
@@ -49,7 +50,7 @@ public class GameHandler {
             player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("message.choseTeam")
                     .replace("%team%",
                             team.getColor() + team.getName()));
-            player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1, 1);
+            player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.click")), 1, 1);
             player.closeInventory();
         }
     }
@@ -109,12 +110,26 @@ public class GameHandler {
         Inventory inv = Bukkit.createInventory(null, 9, name);
         inv.setItem(3, new ItemBuilder(Material.INK_SACK, 1, 10)
                 .setName("§8» §aMit Gold")
-                .setLore("§8» §f" + BedWars.getInstance().getWithGold().size() + " Vote")
+                .setLore("§8» §f" + BedWars.getInstance().getWithGold().size() + " Votes")
                 .build());
         inv.setItem(5, new ItemBuilder(Material.INK_SACK, 1, 8)
                 .setName("§8» §cohne Gold")
-                .setLore("§8» §f" + BedWars.getInstance().getNoGold().size() + " Vote")
+                .setLore("§8» §f" + BedWars.getInstance().getNoGold().size() + " Votes")
                 .build());
+        player.openInventory(inv);
+    }
+
+    public void getMapVoteInventory(Player player, String name) {
+        Inventory inv = Bukkit.createInventory(null, 9, name);
+        for (File map : new File("plugins/BedWars/mapBackup").listFiles()) {
+            if (!BedWars.getInstance().getMapVotes().containsKey(map.getName())) {
+                BedWars.getInstance().getMapVotes().put(map.getName(), new ArrayList<>());
+            }
+            inv.addItem(new ItemBuilder(Material.EMPTY_MAP, 1)
+                    .setName("§8» §b" + map.getName())
+                    .setLore("§8» §f" + BedWars.getInstance().getMapVotes().get(map.getName()).size() + " Votes")
+                    .build());
+        }
         player.openInventory(inv);
     }
 
@@ -127,6 +142,22 @@ public class GameHandler {
                 .setName(BedWars.getInstance().getBedWarsConfig().getString("item.voting.goldVote"))
                 .build());
         player.openInventory(inv);
+    }
+
+    public void checkMapVoting() {
+        if (!BedWars.getInstance().isForceMap()) {
+            ArrayList<Integer> votes = new ArrayList<>();
+            for (File map : new File("plugins/BedWars/mapBackup").listFiles()) {
+                votes.add(BedWars.getInstance().getMapVotes().containsKey(map.getName()) ? BedWars.getInstance().getMapVotes().get(map.getName()).size() : 0);
+            }
+            Collections.sort(votes);
+            for (File map : new File("plugins/BedWars/mapBackup").listFiles()) {
+                if (BedWars.getInstance().getMapVotes().get(map.getName()).size() == votes.get((votes.size() - 1))) {
+                    BedWars.getInstance().setMap(map.getName());
+                    BedWars.getInstance().getBoard().updateBoard();
+                }
+            }
+        }
     }
 
     public void checkGoldVoting() {
@@ -172,7 +203,7 @@ public class GameHandler {
     }
 
     public void loadMap() {
-        String path = BedWars.getInstance().getBedWarsConfig().getString("mapName");
+        String path = BedWars.getInstance().getMap();
         String target = "plugins/BedWars/mapBackup/" + path;
         BedWars.getInstance().getGameHandler().copyFilesInDirectory(new File(target), new File(path));
         Bukkit.createWorld(WorldCreator.name(path).type(WorldType.FLAT).generatorSettings("3;minecraft:air;2").generateStructures(false));
@@ -188,7 +219,7 @@ public class GameHandler {
                 BedWars.getInstance().getAliveTeams().remove(team);
                 team.setBed(false);
                 for (Player a : Bukkit.getOnlinePlayers()) {
-                    a.playSound(a.getLocation(), Sound.WITHER_DEATH, 10F, 10F);
+                    a.playSound(a.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.destroyBed")), 10F, 10F);
                     BedWars.getInstance().getBoard().addPlayerToBoard(a);
                 }
             } else {
@@ -196,7 +227,7 @@ public class GameHandler {
                         .replace("%team%", team.getColor() + team.getName())
                         .replace("%players%", String.valueOf(team.getPlayers().size())));
                 for (Player a : Bukkit.getOnlinePlayers()) {
-                    a.playSound(a.getLocation(), Sound.NOTE_PLING, 1, 1);
+                    a.playSound(a.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.error")), 10F, 10F);
                     BedWars.getInstance().getBoard().addPlayerToBoard(a);
                 }
             }
@@ -222,7 +253,7 @@ public class GameHandler {
 
     public void teleportToMap(Player p) {
         String team = getTeam(p).getName().toLowerCase();
-        p.teleport(BedWars.getInstance().getLocationAPI().getLocation("spawn." + team));
+        p.teleport(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("spawn." + team));
     }
 
 
@@ -254,13 +285,14 @@ public class GameHandler {
     }
 
     public void startSpawner() {
+        LocationAPI locationAPI = new LocationAPI(BedWars.getInstance().getMap());
         Bukkit.getScheduler().runTaskTimer(BedWars.getInstance(), new Runnable() {
             @Override
             public void run() {
                 String type = "bronze";
-                int spawner = BedWars.getInstance().getLocationAPI().getCfg().getInt(type + "spawnercount");
+                int spawner = locationAPI.getCfg().getInt(type + "spawnercount");
                 for (int i = 1; i <= spawner; i++) {
-                    Location loc = BedWars.getInstance().getLocationAPI().getLocation("spawner." + type + "." + i);
+                    Location loc = locationAPI.getLocation("spawner." + type + "." + i);
                     Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.CLAY_BRICK, 1).setName("§cBronze").build());
                 }
             }
@@ -269,9 +301,9 @@ public class GameHandler {
             @Override
             public void run() {
                 String type = "iron";
-                int spawner = BedWars.getInstance().getLocationAPI().getCfg().getInt(type.toLowerCase() + "spawnercount");
+                int spawner = locationAPI.getCfg().getInt(type.toLowerCase() + "spawnercount");
                 for (int i = 1; i <= spawner; i++) {
-                    Location loc = BedWars.getInstance().getLocationAPI().getLocation("spawner." + type.toLowerCase() + "." + i);
+                    Location loc = locationAPI.getLocation("spawner." + type.toLowerCase() + "." + i);
                     Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.IRON_INGOT, 1).setName("§fEisen").build());
                 }
             }
@@ -281,9 +313,9 @@ public class GameHandler {
                 @Override
                 public void run() {
                     String type = "gold";
-                    int spawner = BedWars.getInstance().getLocationAPI().getCfg().getInt(type.toLowerCase() + "spawnercount");
+                    int spawner = locationAPI.getCfg().getInt(type.toLowerCase() + "spawnercount");
                     for (int i = 1; i <= spawner; i++) {
-                        Location loc = BedWars.getInstance().getLocationAPI().getLocation("spawner." + type.toLowerCase() + "." + i);
+                        Location loc = locationAPI.getLocation("spawner." + type.toLowerCase() + "." + i);
                         Bukkit.getWorld(loc.getWorld().getName()).dropItem(loc, new ItemBuilder(Material.GOLD_INGOT, 1).setName("§6Gold").build());
                     }
 
@@ -303,7 +335,7 @@ public class GameHandler {
     }
 
     public void setPlayer(Player player) {
-        player.teleport(BedWars.getInstance().getLocationAPI().getLocation("lobby"));
+        player.teleport(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("lobby"));
         if (!BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
             BedWars.getInstance().getPlayers().add(player.getUniqueId());
         }
@@ -315,9 +347,9 @@ public class GameHandler {
         if (BedWars.getInstance().getGameState() == GameState.LOBBY) {
             player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.team.slot"), new ItemStorage().getTeams());
             player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.vote.slot"), new ItemStorage().getVote());
-        }
-        if (player.hasPermission(BedWars.getInstance().getBedWarsConfig().getString("commands.start.permission"))) {
-            player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.start.slot"), new ItemStorage().getStartItem());
+            if (player.hasPermission(BedWars.getInstance().getBedWarsConfig().getString("commands.start.permission"))) {
+                player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.start.slot"), new ItemStorage().getStartItem());
+            }
         }
         player.getInventory().setItem(BedWars.getInstance().getBedWarsConfig().getInt("item.leave.slot"), new ItemStorage().getLeave());
         for (PotionEffect effect : player.getActivePotionEffects()) {

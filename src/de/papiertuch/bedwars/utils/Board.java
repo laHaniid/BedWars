@@ -44,7 +44,7 @@ public class Board {
         mode.addEntry("§b§l");
 
         map.setPrefix(BedWars.getInstance().getBedWarsConfig().getString("scoreboard.line3.input")
-                .replace("%map%", BedWars.getInstance().getBedWarsConfig().getString("mapName")));
+                .replace("%map%", BedWars.getInstance().getMap()));
         map.addEntry("§c§l");
 
         for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
@@ -94,7 +94,7 @@ public class Board {
             obj.getScore("§b§l").setScore(4);
             obj.getScore("   ").setScore(3);
             obj.getScore(BedWars.getInstance().getBedWarsConfig().getString("scoreboard.line3.title")
-                    .replace("%map%", BedWars.getInstance().getBedWarsConfig().getString("mapName"))).setScore(2);
+                    .replace("%map%", BedWars.getInstance().getMap())).setScore(2);
             obj.getScore("§c§l").setScore(1);
             obj.getScore("    ").setScore(0);
         } else if (BedWars.getInstance().getGameState() == GameState.INGAME) {
@@ -123,7 +123,7 @@ public class Board {
             obj.getScore("§e§l").setScore(4);
             obj.getScore(" ").setScore(3);
             obj.getScore(BedWars.getInstance().getBedWarsConfig().getString("scoreboard.line3.title")
-                    .replace("%map%", BedWars.getInstance().getBedWarsConfig().getString("mapName"))).setScore(2);
+                    .replace("%map%", BedWars.getInstance().getMap())).setScore(2);
             obj.getScore("§c§l").setScore(1);
             obj.getScore("   ").setScore(0);
         }
@@ -133,6 +133,8 @@ public class Board {
     public void updateBoard() {
         for (Player a : Bukkit.getOnlinePlayers()) {
             a.getScoreboard().getObjective("lobby").setDisplayName(getTitle());
+            a.getScoreboard().getTeam("map").setPrefix(BedWars.getInstance().getBedWarsConfig().getString("scoreboard.line3.input")
+                    .replace("%map%", BedWars.getInstance().getMap()));
             a.getScoreboard().getTeam("players").setPrefix(BedWars.getInstance().getBedWarsConfig().getString("scoreboard.line1.input")
                     .replace("%players%", String.valueOf(Bukkit.getOnlinePlayers().size())));
             if (BedWars.getInstance().getGameState() == GameState.INGAME) {

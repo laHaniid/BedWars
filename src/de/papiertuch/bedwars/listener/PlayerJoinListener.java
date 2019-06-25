@@ -50,7 +50,7 @@ public class PlayerJoinListener implements Listener {
         if (BedWars.getInstance().getGameState() == GameState.INGAME) {
             event.setJoinMessage(null);
             player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("message.spectator"));
-            player.teleport(BedWars.getInstance().getLocationAPI().getLocation("spectator"));
+            player.teleport(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("spectator"));
             BedWars.getInstance().getGameHandler().setSpectator(player);
         }
     }

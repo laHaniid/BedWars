@@ -86,10 +86,13 @@ public class ProtectionListener implements Listener {
                 if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                     event.setCancelled(true);
                     if (BedWars.getInstance().getSetupStatsWall().containsKey(player.getUniqueId())) {
+                        String map = BedWars.getInstance().getSetupStatsWallMap().get(player.getUniqueId());
                         int count = BedWars.getInstance().getSetupStatsWall().get(player.getUniqueId());
-                        BedWars.getInstance().getLocationAPI().setLocation("statsSkull." + count, event.getClickedBlock().getLocation());
+                        BedWars.getInstance().getLocationAPI(map).setLocation("statsSkull." + count, event.getClickedBlock().getLocation());
                         player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du hast den §e§l" + count + " §7Kopf gesetzt");
                         BedWars.getInstance().getSetupStatsWall().remove(player.getUniqueId());
+                        BedWars.getInstance().getSetupStatsWallMap().remove(player.getUniqueId());
+                        player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.interact")), 1, 1);
                         return;
                     }
                 }
@@ -99,16 +102,18 @@ public class ProtectionListener implements Listener {
                     if (!player.isSneaking()) {
                         event.setCancelled(true);
                         if (BedWars.getInstance().getSetupBed().containsKey(player.getUniqueId())) {
-                            BedWars.getInstance().getLocationAPI().setLocation("bed." + BedWars.getInstance().getSetupBed().get(player.getUniqueId()).toLowerCase(), event.getClickedBlock().getLocation());
-                            player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Klicke auf das §e§lobere §7Bett");
+                            BedWars.getInstance().getLocationAPI(player.getWorld().getName()).setLocation("bed." + BedWars.getInstance().getSetupBed().get(player.getUniqueId()).toLowerCase(), event.getClickedBlock().getLocation());
+                            player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Klicke auf das §e§lobere §7Bett (Rechtsklick)");
                             BedWars.getInstance().getSetupBedTop().put(player.getUniqueId(), BedWars.getInstance().getSetupBed().get(player.getUniqueId()));
                             BedWars.getInstance().getSetupBed().remove(player.getUniqueId());
+                            player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.interact")), 1, 1);
                             return;
                         }
                         if (BedWars.getInstance().getSetupBedTop().containsKey(player.getUniqueId())) {
-                            BedWars.getInstance().getLocationAPI().setLocation("bedtop." + BedWars.getInstance().getSetupBedTop().get(player.getUniqueId()).toLowerCase(), event.getClickedBlock().getLocation());
+                            BedWars.getInstance().getLocationAPI(player.getWorld().getName()).setLocation("bedtop." + BedWars.getInstance().getSetupBedTop().get(player.getUniqueId()).toLowerCase(), event.getClickedBlock().getLocation());
                             player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Das Bett für Team §e§l" + BedWars.getInstance().getSetupBedTop().get(player.getUniqueId()) + " §7wurde gesetzt");
                             BedWars.getInstance().getSetupBedTop().remove(player.getUniqueId());
+                            player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.interact")), 1, 1);
                             return;
                         }
                     }

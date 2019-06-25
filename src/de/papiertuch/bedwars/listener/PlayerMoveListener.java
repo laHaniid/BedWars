@@ -22,7 +22,7 @@ public class PlayerMoveListener implements Listener {
             Player player = event.getPlayer();
             if (BedWars.getInstance().getGameState() == GameState.INGAME) {
                 String team = BedWars.getInstance().getGameHandler().getTeam(player).getName().toLowerCase();
-                if (player.getLocation().getY() <= (BedWars.getInstance().getLocationAPI().getLocation("spawn." + team).getY() - 50)) {
+                if (player.getLocation().getY() <= (BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("spawn." + team).getY() - 50)) {
                     if (BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
                         if (!player.isDead()) {
                             player.setHealth(0);
@@ -36,8 +36,8 @@ public class PlayerMoveListener implements Listener {
                     player.canSee(a);
                 }
                 if (player.getWorld().getName().equalsIgnoreCase("world")) {
-                    if (player.getLocation().getY() <= (BedWars.getInstance().getLocationAPI().getLocation("lobby").getY() - 50)) {
-                        player.teleport(BedWars.getInstance().getLocationAPI().getLocation("lobby"));
+                    if (player.getLocation().getY() <= (BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("lobby").getY() - 50)) {
+                        player.teleport(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("lobby"));
                     }
                 }
             }

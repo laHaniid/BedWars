@@ -59,21 +59,29 @@ public class Lobby {
                                 .replace("%builder%", BedWars.getInstance().getBedWarsConfig().getString("builder")));
                         playSound();
                         for (Player a : Bukkit.getOnlinePlayers()) {
-                            a.sendTitle(BedWars.getInstance().getBedWarsConfig().getString("prefix"), BedWars.getInstance().getBedWarsConfig().getString("mapName"));
+                            a.sendTitle(BedWars.getInstance().getBedWarsConfig().getString("prefix"), BedWars.getInstance().getMap());
                         }
                         break;
                     case 5:
                         BedWars.getInstance().getGameHandler().checkGoldVoting();
+                        BedWars.getInstance().getGameHandler().checkMapVoting();
                         BedWars.getInstance().getGameHandler().sendBroadCast("");
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.goldStatus")
                         .replace("%state%", BedWars.getInstance().isGold() ? "§2§l✔" : "§4§l✖"));
-                        BedWars.getInstance().getGameHandler().sendBroadCast("");
+                        if (BedWars.getInstance().isForceMap()) {
+                            BedWars.getInstance().getGameHandler().sendBroadCast("");
+                        }
+                        if (!BedWars.getInstance().isForceMap()) {
+                            BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Map Voting §8» §e§l" + BedWars.getInstance().getMap());
+                            BedWars.getInstance().getGameHandler().sendBroadCast("");
+                        }
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.gameStartingIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             a.playSound(a.getLocation(), Sound.ANVIL_LAND, 1, 1);
                             a.getInventory().remove(new ItemStorage().getVote());
                         }
+                        BedWars.getInstance().getGameHandler().loadMap();
                         break;
                     case 3:
                     case 2:
@@ -90,8 +98,8 @@ public class Lobby {
                         for (Player a : Bukkit.getOnlinePlayers()) {
                             a.sendTitle("§eStart", "");
                         }
-                        WorldBorder wb = Bukkit.getWorld(BedWars.getInstance().getBedWarsConfig().getString("mapName")).getWorldBorder();
-                        wb.setCenter(BedWars.getInstance().getLocationAPI().getLocation("spectator"));
+                        WorldBorder wb = Bukkit.getWorld(BedWars.getInstance().getMap()).getWorldBorder();
+                        wb.setCenter(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("spectator"));
                         wb.setSize(50, 2000000);
                         break;
                     case 0:
@@ -114,7 +122,7 @@ public class Lobby {
 
     private void playSound() {
         for (Player a : Bukkit.getOnlinePlayers()) {
-            a.playSound(a.getLocation(), Sound.CLICK, 10F, 10F);
+            a.playSound(a.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.countdown")), 10F, 10F);
         }
     }
 

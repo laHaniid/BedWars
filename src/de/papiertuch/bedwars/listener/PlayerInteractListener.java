@@ -49,25 +49,25 @@ public class PlayerInteractListener implements Listener {
                         }
                     }
                 }
-                player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
+                player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.interact")), 1, 1);
                 player.openInventory(inv);
             }
             if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(new ItemStorage().getTeams().getItemMeta().getDisplayName())) {
-                player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
+                player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.interact")), 1, 1);
                 BedWars.getInstance().getGameHandler().getTeamInventory(player, player.getItemInHand().getItemMeta().getDisplayName());
                 event.setCancelled(true);
             }
             if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(new ItemStorage().getVote().getItemMeta().getDisplayName())) {
-                player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
+                player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.interact")), 1, 1);
                 BedWars.getInstance().getGameHandler().getVoteInventory(player, player.getItemInHand().getItemMeta().getDisplayName());
                 event.setCancelled(true);
             }
             if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(new ItemStorage().getLeave().getItemMeta().getDisplayName())) {
-                player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
+                player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.interact")), 1, 1);
                 player.kickPlayer("§cLobby");
             }
             if (player.getItemInHand().getItemMeta().getDisplayName().equalsIgnoreCase(new ItemStorage().getStartItem().getItemMeta().getDisplayName())) {
-                player.playSound(player.getLocation(), Sound.PISTON_EXTEND, 1, 1);
+                player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.interact")), 1, 1);
                 player.performCommand("start");
             }
             if (event.getAction() == Action.PHYSICAL && event.getClickedBlock().getType() == Material.SOIL) {
@@ -132,7 +132,7 @@ public class PlayerInteractListener implements Listener {
                         all.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);
                     }
                 }
-                player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.countdown")), 1, 1);
                 Bukkit.getScheduler().scheduleSyncDelayedTask(BedWars.getInstance(), new Runnable() {
                     public void run() {
                         if (player.getLocation().getBlockX() != loc.getBlockX() || player.getLocation().getBlockY() != loc.getBlockY() || player.getLocation().getBlockZ() != loc.getBlockZ()) {
@@ -140,7 +140,7 @@ public class PlayerInteractListener implements Listener {
                             player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu darfst dich nicht bewegen!");
                         }
                         if (noMove.contains(player)) {
-                            player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                            player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.countdown")), 1, 1);
                             player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du wirst in §a§l4 §7Sekunden teleportiert");
                             for (Player all : Bukkit.getOnlinePlayers()) {
                                 all.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);
@@ -156,7 +156,7 @@ public class PlayerInteractListener implements Listener {
                                         player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu darfst dich nicht bewegen!");
                                     }
                                     if (noMove.contains(player)) {
-                                        player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                                        player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.countdown")), 1, 1);
                                         player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du wirst in §a§l3 §7Sekunden teleportiert");
                                         for (Player all : Bukkit.getOnlinePlayers()) {
                                             all.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);
@@ -168,7 +168,7 @@ public class PlayerInteractListener implements Listener {
                                                     player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu darfst dich nicht bewegen!");
                                                 }
                                                 if (noMove.contains(player)) {
-                                                    player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                                                    player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.countdown")), 1, 1);
                                                     player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du wirst in §a§l2 §7Sekunden teleportiert");
                                                     for (Player all : Bukkit.getOnlinePlayers()) {
                                                         all.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);
@@ -180,7 +180,7 @@ public class PlayerInteractListener implements Listener {
                                                                 player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu darfst dich nicht bewegen!");
                                                             }
                                                             if (noMove.contains(player)) {
-                                                                player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                                                                player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.countdown")), 1, 1);
                                                                 player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Du wirst in §a§leiner §7Sekunde teleportiert");
                                                                 for (Player all : Bukkit.getOnlinePlayers()) {
                                                                     all.playEffect(player.getLocation(), Effect.ENDER_SIGNAL, 1);
@@ -189,7 +189,7 @@ public class PlayerInteractListener implements Listener {
                                                                     public void run() {
                                                                         BedWars.getInstance().getGameHandler().teleportToMap(player);
                                                                         noMove.remove(player);
-                                                                        player.playSound(player.getLocation(), Sound.NOTE_BASS, 1, 1);
+                                                                        player.playSound(player.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.countdown")), 1, 1);
                                                                         BedWars.getInstance().getShopHandler().removeItems(player.getInventory(), Material.FIREWORK, 1);
                                                                         player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §aDu wurdest nach Hause teleportiert");
                                                                         player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 10F, 10F);

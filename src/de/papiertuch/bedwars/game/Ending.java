@@ -68,7 +68,7 @@ public class Ending {
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
                         for (Player a : Bukkit.getOnlinePlayers()) {
-                            a.playSound(a.getLocation(), Sound.LAVA_POP, 1, 1);
+                            a.playSound(a.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.endingCountdown")), 1, 1);
                         }
                         break;
                     case 10:
@@ -78,13 +78,13 @@ public class Ending {
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopIn")
                                 .replace("%seconds%", String.valueOf(seconds)));
                         for (Player a : Bukkit.getOnlinePlayers()) {
-                            a.playSound(a.getLocation(), Sound.LAVA_POP, 1, 1);
+                            a.playSound(a.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.endingCountdown")), 1, 1);
                         }
                         break;
                     case 1:
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.serverStopInOneSecond"));
                         for (Player a : Bukkit.getOnlinePlayers())
-                            a.playSound(a.getLocation(), Sound.LAVA_POP, 1, 1);
+                            a.playSound(a.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.endingCountdown")), 1, 1);
                         break;
                     case 0:
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.serverStop"));
@@ -120,7 +120,7 @@ public class Ending {
     }
 
     private void setFirework() {
-        Firework firework = BedWars.getInstance().getLocationAPI().getLocation("lobby").getWorld().spawn(BedWars.getInstance().getLocationAPI().getLocation("lobby"), Firework.class);
+        Firework firework = BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("lobby").getWorld().spawn(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("lobby"), Firework.class);
         FireworkMeta fireworkMeta = firework.getFireworkMeta();
         fireworkMeta.setPower(1);
         fireworkMeta.addEffect(FireworkEffect.builder().withFade(Color.BLUE).withColor(Color.YELLOW).flicker(true).withColor(Color.LIME).trail(true).build());

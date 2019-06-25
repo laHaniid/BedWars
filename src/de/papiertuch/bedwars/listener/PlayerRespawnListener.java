@@ -20,15 +20,15 @@ public class PlayerRespawnListener implements Listener {
     public void onRespawn( PlayerRespawnEvent event ) {
         Player player = event.getPlayer();
         if (BedWars.getInstance().getGameState() == GameState.ENDING) {
-            event.setRespawnLocation(BedWars.getInstance().getLocationAPI().getLocation("lobby"));
+            event.setRespawnLocation(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("lobby"));
             player.getInventory().clear();
             player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 10F, 10F);
         } else if (BedWars.getInstance().getGameState() == GameState.INGAME && ! BedWars.getInstance().getPlayers().contains(player.getUniqueId())) {
-            event.setRespawnLocation(BedWars.getInstance().getLocationAPI().getLocation("spectator"));
+            event.setRespawnLocation(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("spectator"));
             BedWars.getInstance().getGameHandler().setSpectator(player);
         } else {
             String team = BedWars.getInstance().getGameHandler().getTeam(player).getName().toLowerCase();
-            event.setRespawnLocation(BedWars.getInstance().getLocationAPI().getLocation("spawn." + team));
+            event.setRespawnLocation(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("spawn." + team));
         }
     }
 }

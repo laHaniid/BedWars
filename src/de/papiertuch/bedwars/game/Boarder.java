@@ -48,15 +48,15 @@ public class Boarder {
                 }
                 switch (minutes) {
                     case 600:
-                        WorldBorder wb = Bukkit.getWorld(BedWars.getInstance().getBedWarsConfig().getString("mapName")).getWorldBorder();
-                        wb.setCenter(BedWars.getInstance().getLocationAPI().getLocation("spectator"));
+                        WorldBorder wb = Bukkit.getWorld(BedWars.getInstance().getMap()).getWorldBorder();
+                        wb.setCenter(BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getLocation("spectator"));
                         wb.setSize(50, minutes);
                         for (BedWarsTeam team : BedWars.getInstance().getBedWarsTeams()) {
                             team.setBed(false);
                         }
                         BedWars.getInstance().getGameHandler().sendBroadCast(BedWars.getInstance().getBedWarsConfig().getString("message.destroyAllBeds"));
                         for (Player a : Bukkit.getOnlinePlayers()) {
-                            a.playSound(a.getLocation(), Sound.WITHER_DEATH, 10F, 10F);
+                            a.playSound(a.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.destroyBed")), 10F, 10F);
                             BedWars.getInstance().getBoard().setScoreBoard(a);
                         }
                         break;

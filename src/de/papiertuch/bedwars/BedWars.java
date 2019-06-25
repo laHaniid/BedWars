@@ -2,6 +2,7 @@ package de.papiertuch.bedwars;
 
 import de.dytanic.cloudnet.bridge.CloudServer;
 import de.dytanic.cloudnet.lib.server.ServerState;
+import de.papiertuch.bedwars.commands.ForceMap;
 import de.papiertuch.bedwars.commands.Setup;
 import de.papiertuch.bedwars.commands.Start;
 import de.papiertuch.bedwars.commands.Stats;
@@ -24,6 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -39,7 +41,6 @@ public class BedWars extends JavaPlugin {
     private GameHandler gameHandler;
     private GameState gameState;
     private Board board;
-    private LocationAPI locationAPI;
     private BedWarsConfig bedWarsConfig;
     private StatsHandler statsHandler;
     private MySQL mySQL;
@@ -59,14 +60,19 @@ public class BedWars extends JavaPlugin {
     private HashMap<UUID, String> setupBed;
     private HashMap<UUID, String> setupBedTop;
     private HashMap<UUID, Integer> setupStatsWall;
+    private HashMap<UUID, String> setupStatsWallMap;
     private HashMap<String, Color> colors;
     private HashMap<Color, Integer> colorIds;
     private HashMap<Player, Player> lastHit;
     private HashMap<BedWarsTeam, Inventory> teamChest;
+    private HashMap<String, ArrayList<UUID>> mapVotes;
 
     private boolean boarder;
     private boolean gold;
     private boolean nickEnable;
+    private boolean forceMap;
+
+    private String map;
 
 
     @Override
@@ -77,7 +83,6 @@ public class BedWars extends JavaPlugin {
         shopHandler = new ShopHandler();
         gameHandler = new GameHandler();
         bedWarsConfig = new BedWarsConfig();
-        locationAPI = new LocationAPI();
         scheduler = new Scheduler();
         board = new Board();
 
@@ -93,19 +98,25 @@ public class BedWars extends JavaPlugin {
         noGold = new ArrayList<>();
 
         setupStatsWall = new HashMap<>();
+        setupStatsWallMap = new HashMap<>();
         teamChest = new HashMap<>();
         lastHit = new HashMap<>();
         colorIds = new HashMap<>();
         colors = new HashMap<>();
         setupBedTop = new HashMap<>();
+        mapVotes = new HashMap<>();
         setupBed = new HashMap<>();
 
         boarder = false;
         gold = true;
         nickEnable = false;
+        forceMap = false;
+
+        File file = new File("plugins/BedWars/mapBackup");
+        int random = new Random().nextInt(file.listFiles().length);
+        map = file.listFiles()[random].getName();
 
         bedWarsConfig.loadConfig();
-        getGameHandler().loadMap();
         setGameState(GameState.LOBBY);
         register();
         loadGame();
@@ -133,23 +144,23 @@ public class BedWars extends JavaPlugin {
 
     private void checkLocations() {
         getServer().getConsoleSender().sendMessage("§8[§6§lBedWars§8] §7Setup Infos:");
-        if (!getLocationAPI().getFile().exists()) {
+        if (!new LocationAPI(getMap()).getFile().exists()) {
             getServer().getConsoleSender().sendMessage("§cEs wurden keine Locations gefunden...");
             return;
         }
 
-        getServer().getConsoleSender().sendMessage("§8- §7MapBackup§8: " + (new File(BedWars.getInstance().getBedWarsConfig().getString("mapName")).exists() ? "§aGesetzt" : "§cFehlt"));
-        getServer().getConsoleSender().sendMessage("§8- §7LobbySpawn§8: " + (getLocationAPI().isExists("lobby") ? "§aGesetzt" : "§cFehlt"));
-        getServer().getConsoleSender().sendMessage("§8- §7SpectatorSpawn§8: " + (getLocationAPI().isExists("spectator") ? "§aGesetzt" : "§cFehlt"));
-        getServer().getConsoleSender().sendMessage("§8- §7StatsWand§8: " + (BedWars.getInstance().getLocationAPI().getCfg().get("statsWall") != null ? "§aGesetzt" : "§cFehlt"));
+        getServer().getConsoleSender().sendMessage("§8- §7MapBackup§8: " + (new File("plugins/BedWars/mapBackup/" + getMap()).exists() ? "§aGesetzt" : "§cFehlt"));
+        getServer().getConsoleSender().sendMessage("§8- §7LobbySpawn§8: " + (getLocationAPI(getMap()).isExists("lobby") ? "§aGesetzt" : "§cFehlt"));
+        getServer().getConsoleSender().sendMessage("§8- §7SpectatorSpawn§8: " + (getLocationAPI(getMap()).isExists("spectator") ? "§aGesetzt" : "§cFehlt"));
+        getServer().getConsoleSender().sendMessage("§8- §7StatsWand§8: " + (BedWars.getInstance().getLocationAPI(getMap()).getCfg().get("statsWall") != null ? "§aGesetzt" : "§cFehlt"));
         for (BedWarsTeam team : getBedWarsTeams()) {
-            getServer().getConsoleSender().sendMessage("§8- §7Spawn von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI().isExists("spawn." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
-            getServer().getConsoleSender().sendMessage("§8- §7Bed von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI().isExists("bed." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
-            getServer().getConsoleSender().sendMessage("§8- §7BedTop von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI().isExists("bedtop." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
+            getServer().getConsoleSender().sendMessage("§8- §7Spawn von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI(getMap()).isExists("spawn." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
+            getServer().getConsoleSender().sendMessage("§8- §7Bed von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI(getMap()).isExists("bed." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
+            getServer().getConsoleSender().sendMessage("§8- §7BedTop von " + team.getColor() + team.getName() + "§8: " + (getLocationAPI(getMap()).isExists("bedtop." + team.getName().toLowerCase()) ? "§aGesetzt" : "§cFehlt"));
         }
 
-        for (int i = 1; i < BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall") + 1; i++) {
-                statsWall.add(getLocationAPI().getLocation("statsSkull." + i));
+        for (int i = 1; i < BedWars.getInstance().getLocationAPI(getMap()).getCfg().getInt("statsWall") + 1; i++) {
+            statsWall.add(getLocationAPI(getMap()).getLocation("statsSkull." + i));
             }
     }
 
@@ -239,6 +250,27 @@ public class BedWars extends JavaPlugin {
         getCommand("start").setExecutor(new Start());
         getCommand("setup").setExecutor(new Setup());
         getCommand("stats").setExecutor(new Stats());
+        getCommand("forcemap").setExecutor(new ForceMap());
+    }
+
+    public HashMap<String, ArrayList<UUID>> getMapVotes() {
+        return mapVotes;
+    }
+
+    public boolean isForceMap() {
+        return forceMap;
+    }
+
+    public void setForceMap(boolean forceMap) {
+        this.forceMap = forceMap;
+    }
+
+    public void setMap(String map) {
+        this.map = map;
+    }
+
+    public String getMap() {
+        return map;
     }
 
     public boolean isNickEnable() {
@@ -247,6 +279,10 @@ public class BedWars extends JavaPlugin {
 
     public void setGold(boolean gold) {
         this.gold = gold;
+    }
+
+    public HashMap<UUID, String> getSetupStatsWallMap() {
+        return setupStatsWallMap;
     }
 
     public boolean isGold() {
@@ -305,8 +341,8 @@ public class BedWars extends JavaPlugin {
         return setupBedTop;
     }
 
-    public LocationAPI getLocationAPI() {
-        return locationAPI;
+    public LocationAPI getLocationAPI(String map) {
+        return new LocationAPI(map);
     }
 
     public GameState getGameState() {
@@ -354,21 +390,21 @@ public class BedWars extends JavaPlugin {
             if (gameState == GameState.LOBBY) {
                 CloudServer cloudServer = CloudServer.getInstance();
                 cloudServer.setMaxPlayers(getGameHandler().getMaxPlayers());
-                cloudServer.setMotd(bedWarsConfig.getString("mapName"));
+                cloudServer.setMotd(getMap());
                 cloudServer.setServerState(ServerState.LOBBY);
                 cloudServer.update();
             }
             if (gameState == GameState.INGAME) {
                 CloudServer cloudServer = CloudServer.getInstance();
                 cloudServer.setMaxPlayers(getGameHandler().getMaxPlayers() + 10);
-                cloudServer.setMotd(bedWarsConfig.getString("mapName"));
+                cloudServer.setMotd(getMap());
                 cloudServer.setServerState(ServerState.INGAME);
                 cloudServer.update();
             }
             if (gameState == GameState.ENDING) {
                 CloudServer cloudServer = CloudServer.getInstance();
                 cloudServer.setMaxPlayers(getGameHandler().getMaxPlayers());
-                cloudServer.setMotd(bedWarsConfig.getString("mapName"));
+                cloudServer.setMotd(getMap());
                 cloudServer.setServerState(ServerState.OFFLINE);
                 cloudServer.update();
             }

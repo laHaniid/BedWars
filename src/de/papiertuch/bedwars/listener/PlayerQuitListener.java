@@ -8,6 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 /**
  * Created by Leon on 15.06.2019.
  * development with love.
@@ -27,6 +30,11 @@ public class PlayerQuitListener implements Listener {
             BedWars.getInstance().getPlayers().remove(player.getUniqueId());
             BedWars.getInstance().getNoGold().remove(player.getUniqueId());
             BedWars.getInstance().getWithGold().remove(player.getUniqueId());
+            for (ArrayList<UUID> list : BedWars.getInstance().getMapVotes().values()) {
+                if (list.contains(player.getUniqueId())) {
+                    list.remove(player.getUniqueId());
+                }
+            }
             if (NickAddon.getInstance().getNickPlayers().contains(player.getUniqueId())) {
                 NickAddon.getInstance().getNickPlayers().remove(player.getUniqueId());
             }

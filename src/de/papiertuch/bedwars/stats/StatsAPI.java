@@ -163,24 +163,24 @@ public class StatsAPI {
 
 
     private List<String> getRanking() {
-        List<String> top10 = new ArrayList<>();
+        List<String> ranking = new ArrayList<>();
         try {
             int rank = 0;
             PreparedStatement preparedStatement = BedWars.getInstance().getMySQL().getConnection().prepareStatement("SELECT * FROM bedwars ORDER BY POINTS DESC");
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
-                rank++;
-                if (rank == BedWars.getInstance().getLocationAPI().getCfg().getInt("statsWall")) {
+                if (rank == BedWars.getInstance().getLocationAPI(BedWars.getInstance().getMap()).getCfg().getInt("statsWall")) {
                     break;
                 }
-                top10.add(rs.getString("NAME"));
+                rank++;
+                ranking.add(rs.getString("NAME"));
             }
             rs.close();
             preparedStatement.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return top10;
+        return ranking;
     }
 
     public void setStatsWall(ArrayList<Location> list) {

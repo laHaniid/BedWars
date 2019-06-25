@@ -34,7 +34,7 @@ public class PlayerDeathListener implements Listener {
                     player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("message.killerLife")
                             .replace("%killer%", killer.getDisplayName())
                             .replace("%live%", getCurrentLive(killer) + " ❤"));
-                    killer.playSound(killer.getLocation(), Sound.LEVEL_UP, 1, 1);
+                    killer.playSound(killer.getLocation(), Sound.valueOf(BedWars.getInstance().getBedWarsConfig().getString("sound.kill")), 1, 1);
                     BedWarsTeam team = BedWars.getInstance().getGameHandler().getTeam(player);
                     if (!team.hasBed()) {
                         BedWars.getInstance().getPlayers().remove(player.getUniqueId());

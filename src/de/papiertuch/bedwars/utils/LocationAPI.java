@@ -16,8 +16,8 @@ import java.io.IOException;
 
 public class LocationAPI {
 
-    private static File file = new File("plugins/BedWars", "location.yml");
-    private static FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+    private File file;
+    private FileConfiguration cfg;
 
     public void setLocation(String name, Location loc) {
         String world = loc.getWorld().getName();
@@ -38,6 +38,19 @@ public class LocationAPI {
             cfg.save(file);
         } catch (IOException e) {
             System.err.println("Die Location " + name + " konnte nicht gespeichert werden.");
+            e.printStackTrace();
+        }
+    }
+
+    public LocationAPI(String map) {
+        file = new File("plugins/BedWars", map + ".yml");
+        cfg = YamlConfiguration.loadConfiguration(file);
+    }
+
+    public void save() {
+        try {
+            cfg.save(file);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
