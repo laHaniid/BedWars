@@ -2,6 +2,7 @@ package de.papiertuch.nickaddon;
 
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.nickaddon.commands.Nick;
+import de.papiertuch.nickaddon.listener.AsyncPlayerChatListener;
 import de.papiertuch.nickaddon.listener.PlayerInteractListener;
 import de.papiertuch.nickaddon.listener.PlayerJoinListener;
 import de.papiertuch.nickaddon.utils.MySQL;
@@ -46,6 +47,9 @@ public class NickAddon extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
+        if (nickConfig.getBoolean("lobbyMode")) {
+            getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(), this);
+        }
 
         getCommand("nick").setExecutor(new Nick());
 
