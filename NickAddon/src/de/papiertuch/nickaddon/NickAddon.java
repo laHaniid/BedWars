@@ -1,6 +1,5 @@
 package de.papiertuch.nickaddon;
 
-import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.nickaddon.commands.Nick;
 import de.papiertuch.nickaddon.listener.AsyncPlayerChatListener;
 import de.papiertuch.nickaddon.listener.PlayerInteractListener;
@@ -47,7 +46,7 @@ public class NickAddon extends JavaPlugin {
         }
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
-        if (nickConfig.getBoolean("lobbyMode")) {
+        if (!nickConfig.getBoolean("lobbyMode")) {
             getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(), this);
         }
 
@@ -71,12 +70,8 @@ public class NickAddon extends JavaPlugin {
         for (Player all : player.getServer().getOnlinePlayers()) {
             initScoreboard(all);
             if (playerPermissionGroup != null)
-                if (NickAddon.getInstance().getNickPlayers().contains(player.getUniqueId())) {
-                    addTeamEntry(player, all, getTabListGroups().get(getTabListGroups().size() - 1));
-                } else {
 
                     addTeamEntry(player, all, playerPermissionGroup);
-                }
 
             TabListGroup targetPermissionGroup = getTabListGroup(all);
 
@@ -85,37 +80,27 @@ public class NickAddon extends JavaPlugin {
         }
     }
 
-    private TabListGroup getTabListGroup(Player player) {
-        for (TabListGroup tabListGroup : getTabListGroups()) {
-            if (player.hasPermission(tabListGroup.getPermission())) {
-                return tabListGroup;
+    public TabListGroup getTabListGroup(Player player) {
+        if (!getNickPlayers().contains(player.getUniqueId())) {
+            for (TabListGroup tabListGroup : getTabListGroups()) {
+                if (player.hasPermission(tabListGroup.getPermission())) {
+                    return tabListGroup;
+                }
             }
         }
         return getTabListGroups().get(getTabListGroups().size() - 1);
     }
 
     private void addTeamEntry(Player target, Player all, TabListGroup permissionGroup) {
-        Team team;
-        if (NickAddon.getInstance().getNickPlayers().contains(target.getUniqueId())) {
-            TabListGroup tabListGroup = getTabListGroups().get(getTabListGroups().size() - 1);
-            team = all.getScoreboard().getTeam(tabListGroup.getTagId() + tabListGroup.getName());
-        } else {
-            team = all.getScoreboard().getTeam(permissionGroup.getTagId() + permissionGroup.getName());
-        }
+        Team team = all.getScoreboard().getTeam(permissionGroup.getTagId() + permissionGroup.getName());
+
         if (team == null)
             team = all.getScoreboard().registerNewTeam(permissionGroup.getTagId() + permissionGroup.getName());
-        if (NickAddon.getInstance().getNickPlayers().contains(target.getUniqueId())) {
-            TabListGroup tabListGroup = getTabListGroups().get(getTabListGroups().size() - 1);
-            team.setPrefix(ChatColor.translateAlternateColorCodes('&', tabListGroup.getPrefix()));
-            team.setSuffix(ChatColor.translateAlternateColorCodes('&', tabListGroup.getSuffix()));
-            team.addEntry(target.getName());
-            target.setDisplayName(ChatColor.translateAlternateColorCodes('&', tabListGroup.getDisplay()) + target.getName());
-        } else {
-            team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
-            team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
-            team.addEntry(target.getName());
-            target.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay()) + target.getName());
-        }
+
+        team.setPrefix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getPrefix()));
+        team.setSuffix(ChatColor.translateAlternateColorCodes('&', permissionGroup.getSuffix()));
+        team.addEntry(target.getName());
+        target.setDisplayName(ChatColor.translateAlternateColorCodes('&', permissionGroup.getDisplay()) + target.getName());
     }
 
     private void initScoreboard(Player all) {

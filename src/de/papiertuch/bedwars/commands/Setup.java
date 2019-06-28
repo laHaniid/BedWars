@@ -3,13 +3,15 @@ package de.papiertuch.bedwars.commands;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.utils.BedWarsTeam;
 import de.papiertuch.bedwars.utils.LocationAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Created by Leon on 15.06.2019.
@@ -97,6 +99,22 @@ public class Setup implements CommandExecutor {
                         }
                     }
                 }
+            } else if (args[0].equalsIgnoreCase("tp")) {
+                if (args.length == 2) {
+                    String map = args[1];
+                    if (new File(map).exists()) {
+                        if (Bukkit.getWorld(map) == null) {
+                            player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §aDie Welt wird geladen...");
+                            Bukkit.createWorld(WorldCreator.name(map).type(WorldType.FLAT).generatorSettings("3;minecraft:air;2").generateStructures(false));
+                            player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Die Welt wurde geladen");
+                        }
+                        player.teleport(Bukkit.getWorld(map).getSpawnLocation());
+                    } else {
+                        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDiese Map gibt es nicht...");
+                    }
+                } else {
+                    player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setLobby <Map>");
+                }
             } else if (args[0].equalsIgnoreCase("setLobby")) {
                 if (args.length == 2) {
                     new LocationAPI(args[1]).setLocation("lobby", player.getLocation());
@@ -136,14 +154,16 @@ public class Setup implements CommandExecutor {
     }
 
     private void sendHelp(Player player) {
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup status <Map>");
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup saveMap");
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup list");
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpawn <Team>");
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setBed <Team>");
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpawner <§cBronze§7/§fIron§7/§6Gold§7>");
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setStatsWall <Map>");
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setSpectator");
-        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7/setup setLobby <Map>");
+        player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §7Setup Befehl");
+        player.sendMessage("§8» §7/setup status <Map> §8» §eZeige dir den aktuellen Status an");
+        player.sendMessage("§8» §7/setup tp <Map> §8» §eTeleportiere dich zu einer Map");
+        player.sendMessage("§8» §7/setup saveMap §8» §eSpeichere die aktuelle Map als Backup");
+        player.sendMessage("§8» §7/setup list §8» §eZeige dir alle Teams an");
+        player.sendMessage("§8» §7/setup setSpawn <Team> §8» §eSetze den Spawn der Teams");
+        player.sendMessage("§8» §7/setup setBed <Team> §8» §eSetze das Bett der Teams");
+        player.sendMessage("§8» §7/setup setSpawner <§cBronze§7/§fIron§7/§6Gold§7> §8» §eMach den Block unter dir zum Spawner");
+        player.sendMessage("§8» §7/setup setStatsWall <Map> §8» §eSetze einen Kopf der StatsWand");
+        player.sendMessage("§8» §7/setup setSpectator §8» §eSetzt den Spectator Spawn");
+        player.sendMessage("§8» §7/setup setLobby <Map> §8» §eSetzt den Spawn der Wartelobby");
     }
 }

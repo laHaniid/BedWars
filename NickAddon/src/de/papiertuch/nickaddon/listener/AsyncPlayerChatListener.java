@@ -1,6 +1,7 @@
 package de.papiertuch.nickaddon.listener;
 
 import de.papiertuch.nickaddon.NickAddon;
+import de.papiertuch.nickaddon.utils.TabListGroup;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,10 +18,17 @@ public class AsyncPlayerChatListener implements Listener {
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
-        event.setCancelled(true);
-        String message = event.getMessage().replace("%", "%%");
-        event.setFormat(NickAddon.getInstance().getNickConfig().getString("chat.format")
-                .replace("%player%", player.getDisplayName())
-                .replace("%message%", message));
+        TabListGroup tabListGroup = NickAddon.getInstance().getTabListGroup(player);
+        String message = NickAddon.getInstance().getNickConfig().getString("chat.format")
+                .replace("%player%", player.getName())
+                .replace("%", "%%")
+                .replace("%display%", tabListGroup.getDisplay())
+                .replace("%prefix%", tabListGroup.getPrefix())
+                .replace("%suffix%", tabListGroup.getSuffix())
+                .replace("%group%", tabListGroup.getName())
+                .replace("%message%", event.getMessage());
+        if (player.hasPermission("chat.color")) message.replace("&", "§");
+
+        event.setFormat(message);
     }
 }

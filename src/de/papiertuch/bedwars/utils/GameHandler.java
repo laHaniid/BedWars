@@ -122,9 +122,6 @@ public class GameHandler {
     public void getMapVoteInventory(Player player, String name) {
         Inventory inv = Bukkit.createInventory(null, 9, name);
         for (File map : new File("plugins/BedWars/mapBackup").listFiles()) {
-            if (!BedWars.getInstance().getMapVotes().containsKey(map.getName())) {
-                BedWars.getInstance().getMapVotes().put(map.getName(), new ArrayList<>());
-            }
             inv.addItem(new ItemBuilder(Material.EMPTY_MAP, 1)
                     .setName("§8» §b" + map.getName())
                     .setLore("§8» §f" + BedWars.getInstance().getMapVotes().get(map.getName()).size() + " Votes")
@@ -148,7 +145,7 @@ public class GameHandler {
         if (!BedWars.getInstance().isForceMap()) {
             ArrayList<Integer> votes = new ArrayList<>();
             for (File map : new File("plugins/BedWars/mapBackup").listFiles()) {
-                votes.add(BedWars.getInstance().getMapVotes().containsKey(map.getName()) ? BedWars.getInstance().getMapVotes().get(map.getName()).size() : 0);
+                votes.add(BedWars.getInstance().getMapVotes().get(map.getName()).size());
             }
             Collections.sort(votes);
             for (File map : new File("plugins/BedWars/mapBackup").listFiles()) {
@@ -206,7 +203,9 @@ public class GameHandler {
         String path = BedWars.getInstance().getMap();
         String target = "plugins/BedWars/mapBackup/" + path;
         BedWars.getInstance().getGameHandler().copyFilesInDirectory(new File(target), new File(path));
-        Bukkit.createWorld(WorldCreator.name(path).type(WorldType.FLAT).generatorSettings("3;minecraft:air;2").generateStructures(false));
+        if (Bukkit.getWorld(path) == null) {
+            Bukkit.createWorld(WorldCreator.name(path).type(WorldType.FLAT).generatorSettings("3;minecraft:air;2").generateStructures(false));
+        }
     }
 
     public void checkTeams(Player player) {

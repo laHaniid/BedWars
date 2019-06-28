@@ -47,7 +47,7 @@ public class NickConfig {
         configuration.addDefault("message.unNick", "%prefix% &cDein Nickname wurde entfernt");
         configuration.addDefault("message.noPerms", "%prefix% &cDazu hast du keine Rechte...");
 
-        configuration.addDefault("chat.format", "%player% &8\u00BB &7%message%");
+        configuration.addDefault("chat.format", "%display%%player% &8\u00BB &7%message%");
 
         List<String> tabList = new ArrayList<>();
         tabList.add("Admin");

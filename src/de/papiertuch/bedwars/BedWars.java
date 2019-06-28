@@ -111,11 +111,16 @@ public class BedWars extends JavaPlugin {
         gold = true;
         nickEnable = false;
         forceMap = false;
+        map = "Unbekannt";
 
         File file = new File("plugins/BedWars/mapBackup");
-        int random = new Random().nextInt(file.listFiles().length);
-        map = file.listFiles()[random].getName();
-
+        if (file.exists()) {
+            int random = new Random().nextInt(file.listFiles().length);
+            map = file.listFiles()[random].getName();
+        }
+        for (File map : file.listFiles()) {
+            getMapVotes().put(map.getName(), new ArrayList<>());
+        }
         bedWarsConfig.loadConfig();
         setGameState(GameState.LOBBY);
         register();

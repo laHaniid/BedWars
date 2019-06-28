@@ -35,11 +35,11 @@ public class PlayerJoinListener implements Listener {
                     .replace("%player%", player.getDisplayName())
                     .replace("%players%", String.valueOf(Bukkit.getOnlinePlayers().size()))
                     .replace("%maxPlayers%", String.valueOf(BedWars.getInstance().getGameHandler().getMaxPlayers())));
-            if ((BedWars.getInstance().getPlayers().size() >= 2) && (!BedWars.getInstance().getScheduler().getLobby().isRunning())) {
+            if ((BedWars.getInstance().getPlayers().size() >= BedWars.getInstance().getBedWarsConfig().getInt("minPlayers")) && (!BedWars.getInstance().getScheduler().getLobby().isRunning())) {
                 BedWars.getInstance().getScheduler().getLobby().stopWaiting();
                 BedWars.getInstance().getScheduler().getLobby().startCountdown();
             }
-            if ((BedWars.getInstance().getPlayers().size() < 2) && (!BedWars.getInstance().getScheduler().getLobby().isWaiting())) {
+            if ((BedWars.getInstance().getPlayers().size() < BedWars.getInstance().getBedWarsConfig().getInt("minPlayers")) && (!BedWars.getInstance().getScheduler().getLobby().isWaiting())) {
                 BedWars.getInstance().getScheduler().getLobby().startWaiting();
             }
             if (BedWars.getInstance().getPlayers().size() == BedWars.getInstance().getGameHandler().getMaxPlayers()) {
