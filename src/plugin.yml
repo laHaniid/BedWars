@@ -4,6 +4,7 @@ version: 1.2
 main: de.papiertuch.bedwars.BedWars
 softdepend:
   - CloudNetAPI
+  - Multiverse-Core
 commands:
   start:
   setup:

@@ -135,6 +135,9 @@ public class BedWars extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("NickAddon") != null) {
             nickEnable = true;
         }
+        if (getServer().getPluginManager().getPlugin("Multiverse-Core") != null) {
+            getServer().getPluginManager().disablePlugin(getServer().getPluginManager().getPlugin("Multiverse-Core"));
+        }
     }
 
     @Override
