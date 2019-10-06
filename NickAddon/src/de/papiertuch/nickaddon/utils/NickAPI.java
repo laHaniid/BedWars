@@ -1,9 +1,7 @@
 package de.papiertuch.nickaddon.utils;
 
-import de.dytanic.cloudnet.api.CloudAPI;
 import de.papiertuch.nickaddon.NickAddon;
 import net.haoshoku.nick.NickPlugin;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Random;
@@ -38,11 +36,17 @@ public class NickAPI {
 
     public void setNick(Boolean value) {
         if (value) {
-            NickPlugin.getPlugin().getAPI().nick(player, getNickName(), true, null, null);
-            NickPlugin.getPlugin().getAPI().setGameProfile(player, getNickName());
+            String name;
+            if (NickAddon.getInstance().getNickConfig().getBoolean("autoNick.randomName")) {
+                name = getRandomNickName();
+            } else {
+                name = getNickName();
+            }
+            NickPlugin.getPlugin().getAPI().nick(player, name, true, null, null);
+            NickPlugin.getPlugin().getAPI().setGameProfile(player, name);
             NickPlugin.getPlugin().getAPI().refreshPlayer(player);
             player.sendMessage(NickAddon.getInstance().getNickConfig().getString("message.nick")
-                    .replace("%nick%", getNickName()));
+                    .replace("%nick%", name));
             if (!NickAddon.getInstance().getNickPlayers().contains(uuid)) {
                 NickAddon.getInstance().getNickPlayers().add(uuid);
             }
@@ -57,6 +61,12 @@ public class NickAPI {
 
     public boolean getAutoNickState() {
         return NickAddon.getInstance().getMySQL().getState(uuid);
+    }
+
+    public String getRandomNickName() {
+        Random r = new Random();
+        String name = NickAddon.getInstance().getNickConfig().getConfiguration().getStringList("nicks").get(r.nextInt(NickAddon.getInstance().getNickConfig().getConfiguration().getStringList("nicks").size()));
+        return name;
     }
 
     private void setRandomNickName() {

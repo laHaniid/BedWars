@@ -1,8 +1,8 @@
 package de.papiertuch.bedwars.listener;
 
+import de.dytanic.cloudnet.bridge.CloudServer;
 import de.papiertuch.bedwars.BedWars;
 import de.papiertuch.bedwars.enums.GameState;
-import de.papiertuch.bedwars.utils.ItemStorage;
 import de.papiertuch.nickaddon.utils.NickAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -57,6 +57,39 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void onLoginEvent(PlayerLoginEvent event) {
+        if (BedWars.getInstance().getGameState() == GameState.LOBBY) {
+            Player player = event.getPlayer();
+            int i = BedWars.getInstance().getBedWarsConfig().getBoolean("cloudnet") ? CloudServer.getInstance().getMaxPlayers() : BedWars.getInstance().getGameHandler().getMaxPlayers();
+            if (i < Bukkit.getOnlinePlayers().size()) {
+                return;
+            }
+            if (i == Bukkit.getOnlinePlayers().size()) {
+                if (!player.hasPermission("bedwars.premium")) {
+                    event.disallow(PlayerLoginEvent.Result.KICK_OTHER, BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu benötigst mindestens den §6§lPremium §cRang, um diesen Server betreten zu können!");
+                    return;
+                }
+                int q = 0;
+                for (Player a : Bukkit.getOnlinePlayers()) {
+                    if (player.hasPermission("bedwars.premium")) {
+                        q++;
+                        event.disallow(PlayerLoginEvent.Result.KICK_OTHER, BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDieser Server ist komplett voll. Jeder hat mindestenes einen §6§lPremium §cRang!");
+                        if (q == Bukkit.getOnlinePlayers().size()) {
+                            return;
+                        }
+                    }
+                }
+                for (Player a : Bukkit.getOnlinePlayers()) {
+                    if (!player.hasPermission("bedwars.premium")) {
+                        a.kickPlayer(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu wurdest von einem §e§lhöherrängigen §cSpieler gekickt!");
+                        a.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu wurdest von einem §e§lhöherrängigen §cSpieler gekickt!");
+                        event.allow();
+                        return;
+                    }
+                }
+            } else {
+                player.sendMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDu benötigst mindestens den §6§lPremium §cRang, um diesen Server betreten zu können!");
+            }
+        }
         if (BedWars.getInstance().getGameState() == GameState.ENDING) {
             event.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             event.setKickMessage(BedWars.getInstance().getBedWarsConfig().getString("prefix") + " §cDie Runde ist bereits zuende...");

@@ -39,6 +39,8 @@ public class NickConfig {
         configuration.addDefault("item.nick.material", "NAME_TAG");
         configuration.addDefault("item.nick.slot", 4);
 
+        configuration.addDefault("autoNick.randomName", false);
+
         configuration.addDefault("command.nick.permission", "bedwars.nick");
 
         configuration.addDefault("message.autoNickEnable", "%prefix% &7Dein &e&lAutoNick &7ist nun &a&laktiviert");

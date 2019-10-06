@@ -39,7 +39,6 @@ public class StatsAPI {
 
     }
 
-
     public Integer getRankingFromUUID() {
         boolean done = false;
         int rank = 0;

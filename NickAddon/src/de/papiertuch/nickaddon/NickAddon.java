@@ -4,6 +4,7 @@ import de.papiertuch.nickaddon.commands.Nick;
 import de.papiertuch.nickaddon.listener.AsyncPlayerChatListener;
 import de.papiertuch.nickaddon.listener.PlayerInteractListener;
 import de.papiertuch.nickaddon.listener.PlayerJoinListener;
+import de.papiertuch.nickaddon.listener.PlayerQuitListener;
 import de.papiertuch.nickaddon.utils.MySQL;
 import de.papiertuch.nickaddon.utils.NickConfig;
 import de.papiertuch.nickaddon.utils.TabListGroup;
@@ -44,11 +45,15 @@ public class NickAddon extends JavaPlugin {
         if (mySQL.isConnected()) {
             mySQL.createTable();
         }
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
+
+
         if (!nickConfig.getBoolean("lobbyMode")) {
-            getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(), this);
+            getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
+        } else {
+            getServer().getPluginManager().registerEvents(new PlayerInteractListener(), this);
         }
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new AsyncPlayerChatListener(), this);
 
         getCommand("nick").setExecutor(new Nick());
 

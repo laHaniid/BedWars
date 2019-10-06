@@ -118,8 +118,12 @@ public class BedWars extends JavaPlugin {
             int random = new Random().nextInt(file.listFiles().length);
             map = file.listFiles()[random].getName();
         }
-        for (File map : file.listFiles()) {
-            getMapVotes().put(map.getName(), new ArrayList<>());
+        try {
+            for (File map : file.listFiles()) {
+                getMapVotes().put(map.getName(), new ArrayList<>());
+            }
+        } catch (NullPointerException e) {
+
         }
         bedWarsConfig.loadConfig();
         setGameState(GameState.LOBBY);

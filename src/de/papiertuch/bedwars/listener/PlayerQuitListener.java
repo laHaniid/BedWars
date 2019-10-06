@@ -35,9 +35,6 @@ public class PlayerQuitListener implements Listener {
                     list.remove(player.getUniqueId());
                 }
             }
-            if (NickAddon.getInstance().getNickPlayers().contains(player.getUniqueId())) {
-                NickAddon.getInstance().getNickPlayers().remove(player.getUniqueId());
-            }
             if (BedWars.getInstance().getGameState() == GameState.LOBBY) {
                 if ((BedWars.getInstance().getPlayers().size() < BedWars.getInstance().getGameHandler().getMaxPlayers()) && (BedWars.getInstance().getScheduler().getLobby().isRunning())) {
                     BedWars.getInstance().getScheduler().getLobby().stopCountdown();
